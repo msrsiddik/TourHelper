@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Tour Helper</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="degree_mark">\u00B0</string>
+    <string name="celsius">&#8451;</string>
+    <string name="fahrenheit">&#8457;</string>
+    <string name="today">Today</string>
+    <string name="forecast">Forecast</string>
+</resources>
