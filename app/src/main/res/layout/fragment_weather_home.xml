@@ -6,6 +6,8 @@
     android:orientation="vertical"
     tools:context=".weather.WeatherHomeFragment">
 
+    <include layout="@layout/toolbar"/>
+
     <android.support.design.widget.TabLayout
         android:id="@+id/tabLayout"
         android:layout_width="match_parent"

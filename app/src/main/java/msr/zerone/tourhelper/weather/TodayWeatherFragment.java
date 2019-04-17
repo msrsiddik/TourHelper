@@ -93,6 +93,31 @@ public class TodayWeatherFragment extends Fragment implements LocationFindInterf
         weatherInfoDisplay(latitude,longitude);
     }
 
+    @Override
+    public void searchCity(String cityName) {
+        String urlC = String.format("data/2.5/weather?q=%s&units=metric&appid=%s", cityName, API);
+//        String urlC = String.format("data/2.5/forecast?q=%s&units=metric&cnt=7&appid=%s",cityName,API);
+        WeatherApi weatherApi = RetrofitClient.getClient(WEATEHR_BASE_URL).create(WeatherApi.class);
+        weatherApi.todayWeatherServiceCall(urlC).enqueue(new Callback<TodayWeatherService>() {
+            @Override
+            public void onResponse(Call<TodayWeatherService> call, Response<TodayWeatherService> response) {
+                if (response.isSuccessful()){
+                    TodayWeatherService today = response.body();
+
+                    double lat = today.getCoord().getLat();
+                    double lon = today.getCoord().getLon();
+
+                    weatherInfoDisplay(lat,lon);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<TodayWeatherService> call, Throwable t) {
+                Log.e("Today", "onFailure: "+t.getLocalizedMessage() );
+            }
+        });
+    }
+
     private void weatherInfoDisplay(double latitude, double longitude) {
         String urlC = String.format("data/2.5/weather?lat=%f&lon=%f&units=metric&appid=%s", latitude, longitude, API);
         WeatherApi weatherApi = RetrofitClient.getClient(WEATEHR_BASE_URL).create(WeatherApi.class);
@@ -132,7 +157,6 @@ public class TodayWeatherFragment extends Fragment implements LocationFindInterf
             public void onResponse(Call<TodayForecast3h> call, Response<TodayForecast3h> response) {
                 if (response.isSuccessful()){
                     TodayForecast3h list = response.body();
-                    Log.e("Response ", "onResponse: "+list.getCod() );
 
                     TodayForecastRecyclerViewAdaper adapter = new TodayForecastRecyclerViewAdaper(getContext(),list.getList());
                     LinearLayoutManager llm = new LinearLayoutManager(getContext());

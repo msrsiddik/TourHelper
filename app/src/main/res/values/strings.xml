@@ -9,4 +9,5 @@
     <string name="fahrenheit">&#8457;</string>
     <string name="today">Today</string>
     <string name="forecast">Forecast</string>
+    <string name="search_city">Search City</string>
 </resources>

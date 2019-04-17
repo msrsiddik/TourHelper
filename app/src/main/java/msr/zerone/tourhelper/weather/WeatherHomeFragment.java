@@ -2,10 +2,13 @@ package msr.zerone.tourhelper.weather;
 
 
 import android.Manifest;
+import android.app.SearchManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.provider.SearchRecentSuggestions;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
@@ -14,9 +17,13 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -30,6 +37,8 @@ import msr.zerone.tourhelper.R;
  */
 public class WeatherHomeFragment extends Fragment {
     private Context context;
+    private Toolbar toolbar;
+    private SearchView searchView;
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private LocationFindInterface locationForToday;
@@ -37,6 +46,9 @@ public class WeatherHomeFragment extends Fragment {
     private FusedLocationProviderClient client;
     private double latitude, longitude;
     private boolean isLocationPermissionGranted=false;
+
+    private LocationFindInterface todayWeatherFragment;
+    private LocationFindInterface forecastWeatherFragment;
 
 
     public WeatherHomeFragment() {
@@ -53,6 +65,7 @@ public class WeatherHomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+
         return inflater.inflate(R.layout.fragment_weather_home, container, false);
     }
 
@@ -61,10 +74,48 @@ public class WeatherHomeFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         client = LocationServices.getFusedLocationProviderClient(context);
-//
+
+        toolbar = view.findViewById(R.id.toolbar);
         tabLayout = view.findViewById(R.id.tabLayout);
         viewPager = view.findViewById(R.id.viewPager);
-//
+
+        todayWeatherFragment = new TodayWeatherFragment();
+        forecastWeatherFragment = new ForecastWeatherFragment();
+
+        searchItemRecent();
+
+        setHasOptionsMenu(true);
+        toolbar.setTitle("Weather");
+        toolbar.inflateMenu(R.menu.main_menu);
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                SearchManager manager = (SearchManager) getActivity().getSystemService(context.SEARCH_SERVICE);
+                switch (menuItem.getItemId()) {
+                    case R.id.search_menu_item:
+                        searchView = (SearchView) menuItem.getActionView();
+                        searchView.setSearchableInfo(manager.getSearchableInfo(getActivity().getComponentName()));
+                        searchView.setSubmitButtonEnabled(true);
+                        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                            @Override
+                            public boolean onQueryTextSubmit(String s) {
+                                return false;
+                            }
+
+                            @Override
+                            public boolean onQueryTextChange(String s) {
+                                return false;
+                            }
+                        });
+                        return true;
+                }
+                return false;
+            }
+        });
+
+
+
+
         TabAdapter adapter = new TabAdapter(getActivity().getSupportFragmentManager(),tabLayout.getTabCount());
         viewPager.setAdapter(adapter);
         viewPager.setOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
@@ -85,6 +136,21 @@ public class WeatherHomeFragment extends Fragment {
             }
         });
 
+    }
+
+    private void searchItemRecent(){
+        Intent intent = getActivity().getIntent();
+        if(Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            String city = intent.getStringExtra(SearchManager.QUERY);
+            Toast.makeText(context, city, Toast.LENGTH_SHORT).show();
+            todayWeatherFragment.searchCity(city);
+            forecastWeatherFragment.searchCity(city);
+            SearchRecentSuggestions suggestions =
+                    new SearchRecentSuggestions(context,
+                            RecentQueryProvider.AUTHORITY,
+                            RecentQueryProvider.MODE);
+            suggestions.saveRecentQuery(city, null);
+        }
     }
 
     @Override
