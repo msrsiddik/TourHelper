@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "571509027302",
+    "firebase_url": "https://tour-helper-ccf6a.firebaseio.com",
+    "project_id": "tour-helper-ccf6a",
+    "storage_bucket": "tour-helper-ccf6a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:571509027302:android:402eb3dc2534892b",
+        "android_client_info": {
+          "package_name": "msr.zerone.tourhelper"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "571509027302-k2ds5v837l6sgoj5dldc50k6cblpuc0v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCtGT8CZBOqfv6BFo5p-_vo5LhCDwlgTak"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "571509027302-k2ds5v837l6sgoj5dldc50k6cblpuc0v.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

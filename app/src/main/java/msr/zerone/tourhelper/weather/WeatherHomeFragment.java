@@ -47,8 +47,12 @@ public class WeatherHomeFragment extends Fragment {
     private double latitude, longitude;
     private boolean isLocationPermissionGranted=false;
 
-    private LocationFindInterface todayWeatherFragment;
-    private LocationFindInterface forecastWeatherFragment;
+    public static final String WEATHER_ICON_URL = "http://openweathermap.org/img/w/";
+    public static final String WEATEHR_BASE_URL = "http://api.openweathermap.org/";
+    public static String API = "";
+    public static String searchCityName = "";
+
+    public static boolean reStartWeather = false;
 
 
     public WeatherHomeFragment() {
@@ -79,14 +83,14 @@ public class WeatherHomeFragment extends Fragment {
         tabLayout = view.findViewById(R.id.tabLayout);
         viewPager = view.findViewById(R.id.viewPager);
 
-        todayWeatherFragment = new TodayWeatherFragment();
-        forecastWeatherFragment = new ForecastWeatherFragment();
+        API = getString(R.string.weather_api_key_1);
+
 
         searchItemRecent();
 
         setHasOptionsMenu(true);
         toolbar.setTitle("Weather");
-        toolbar.inflateMenu(R.menu.main_menu);
+        toolbar.inflateMenu(R.menu.weather_toolbar_menu);
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
@@ -99,6 +103,7 @@ public class WeatherHomeFragment extends Fragment {
                         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                             @Override
                             public boolean onQueryTextSubmit(String s) {
+                                reStartWeather = true;
                                 return false;
                             }
 
@@ -109,7 +114,7 @@ public class WeatherHomeFragment extends Fragment {
                         });
                         return true;
                 }
-                return false;
+                return true;
             }
         });
 
@@ -142,13 +147,10 @@ public class WeatherHomeFragment extends Fragment {
         Intent intent = getActivity().getIntent();
         if(Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String city = intent.getStringExtra(SearchManager.QUERY);
+            reStartWeather = true;
             Toast.makeText(context, city, Toast.LENGTH_SHORT).show();
-            todayWeatherFragment.searchCity(city);
-            forecastWeatherFragment.searchCity(city);
-            SearchRecentSuggestions suggestions =
-                    new SearchRecentSuggestions(context,
-                            RecentQueryProvider.AUTHORITY,
-                            RecentQueryProvider.MODE);
+            searchCityName = city;
+            SearchRecentSuggestions suggestions = new SearchRecentSuggestions(context, RecentQueryProvider.AUTHORITY, RecentQueryProvider.MODE);
             suggestions.saveRecentQuery(city, null);
         }
     }
@@ -200,10 +202,10 @@ public class WeatherHomeFragment extends Fragment {
         }
     }
 
-    private class TabAdapter extends FragmentStatePagerAdapter {
+    protected class TabAdapter extends FragmentStatePagerAdapter {
         private int noOfTabPage;
-        private TodayWeatherFragment todayFragment;
-        private ForecastWeatherFragment forecastFragment;
+        protected TodayWeatherFragment todayFragment;
+        protected ForecastWeatherFragment forecastFragment;
 
         public TabAdapter(FragmentManager fm, int noOfTabPage) {
             super(fm);

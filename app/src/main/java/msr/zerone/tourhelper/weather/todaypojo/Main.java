@@ -7,53 +7,53 @@ import com.google.gson.annotations.SerializedName;
 public class Main {
 
     @SerializedName("humidity")
-    private Long mHumidity;
+    private float mHumidity;
     @SerializedName("pressure")
-    private Long mPressure;
+    private float mPressure;
     @SerializedName("temp")
-    private int mTemp;
+    private float mTemp;
     @SerializedName("temp_max")
-    private int mTempMax;
+    private float mTempMax;
     @SerializedName("temp_min")
-    private int mTempMin;
+    private float mTempMin;
 
-    public Long getHumidity() {
+    public float getHumidity() {
         return mHumidity;
     }
 
-    public void setHumidity(Long humidity) {
+    public void setHumidity(float humidity) {
         mHumidity = humidity;
     }
 
-    public Long getPressure() {
+    public float getPressure() {
         return mPressure;
     }
 
-    public void setPressure(Long pressure) {
+    public void setPressure(float pressure) {
         mPressure = pressure;
     }
 
-    public int getTemp() {
+    public float getTemp() {
         return mTemp;
     }
 
-    public void setTemp(int temp) {
+    public void setTemp(float temp) {
         mTemp = temp;
     }
 
-    public int getTempMax() {
+    public float getTempMax() {
         return mTempMax;
     }
 
-    public void setTempMax(int tempMax) {
+    public void setTempMax(float tempMax) {
         mTempMax = tempMax;
     }
 
-    public int getTempMin() {
+    public float getTempMin() {
         return mTempMin;
     }
 
-    public void setTempMin(int tempMin) {
+    public void setTempMin(float tempMin) {
         mTempMin = tempMin;
     }
 

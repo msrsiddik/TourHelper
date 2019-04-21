@@ -17,7 +17,7 @@ import java.util.List;
 
 import msr.zerone.tourhelper.R;
 
-import static msr.zerone.tourhelper.weather.TodayWeatherFragment.WEATHER_ICON_URL;
+import static msr.zerone.tourhelper.weather.WeatherHomeFragment.WEATHER_ICON_URL;
 
 public class TodayForecastRecyclerViewAdaper extends RecyclerView.Adapter<TodayForecastRecyclerViewAdaper.TodayViewHolder> {
 

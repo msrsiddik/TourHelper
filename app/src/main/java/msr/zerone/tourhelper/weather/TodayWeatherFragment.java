@@ -27,6 +27,10 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static msr.zerone.tourhelper.weather.WeatherHomeFragment.API;
+import static msr.zerone.tourhelper.weather.WeatherHomeFragment.WEATEHR_BASE_URL;
+import static msr.zerone.tourhelper.weather.WeatherHomeFragment.WEATHER_ICON_URL;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -38,9 +42,7 @@ public class TodayWeatherFragment extends Fragment implements LocationFindInterf
     private SwipeRefreshLayout swipeRefresh;
     private double latitude, longitude;
 
-    public static final String WEATHER_ICON_URL = "http://openweathermap.org/img/w/";
-    public static final String WEATEHR_BASE_URL = "http://api.openweathermap.org/";
-    public static final String API = "c6c853d627316fb41fbfceb5bd4528f3";
+
 
     public TodayWeatherFragment() {
         // Required empty public constructor
@@ -78,7 +80,7 @@ public class TodayWeatherFragment extends Fragment implements LocationFindInterf
         swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                weatherInfoDisplay(latitude,longitude);
+                weatherInfoDisplay(latitude,longitude,null);
                 swipeRefresh.setRefreshing(false);
             }
         });
@@ -90,36 +92,24 @@ public class TodayWeatherFragment extends Fragment implements LocationFindInterf
     public void receiveLocation(double latitude, double longitude) {
         this.latitude = latitude;
         this.longitude = longitude;
-        weatherInfoDisplay(latitude,longitude);
+        if (WeatherHomeFragment.searchCityName.isEmpty()) {
+            weatherInfoDisplay(latitude, longitude, null);
+        }else {
+            weatherInfoDisplay(0.0,0.0,WeatherHomeFragment.searchCityName);
+        }
     }
 
-    @Override
-    public void searchCity(String cityName) {
-        String urlC = String.format("data/2.5/weather?q=%s&units=metric&appid=%s", cityName, API);
-//        String urlC = String.format("data/2.5/forecast?q=%s&units=metric&cnt=7&appid=%s",cityName,API);
-        WeatherApi weatherApi = RetrofitClient.getClient(WEATEHR_BASE_URL).create(WeatherApi.class);
-        weatherApi.todayWeatherServiceCall(urlC).enqueue(new Callback<TodayWeatherService>() {
-            @Override
-            public void onResponse(Call<TodayWeatherService> call, Response<TodayWeatherService> response) {
-                if (response.isSuccessful()){
-                    TodayWeatherService today = response.body();
+    private void weatherInfoDisplay(double latitude, double longitude, String cityName) {
+        String urlC = null, urlF = null;
+        if (WeatherHomeFragment.searchCityName.isEmpty()) {
+            urlF = String.format("data/2.5/forecast?lat=%f&lon=%f&units=metric&cnt=7&appid=%s",latitude, longitude, API);
+            urlC = String.format("data/2.5/weather?lat=%f&lon=%f&units=metric&appid=%s", latitude, longitude, API);
 
-                    double lat = today.getCoord().getLat();
-                    double lon = today.getCoord().getLon();
+        }else {
+            urlF = String.format("data/2.5/forecast?q=%s&units=metric&cnt=7&appid=%s",cityName, API);
+            urlC = String.format("data/2.5/weather?q=%s&units=metric&appid=%s", cityName, API);
+        }
 
-                    weatherInfoDisplay(lat,lon);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<TodayWeatherService> call, Throwable t) {
-                Log.e("Today", "onFailure: "+t.getLocalizedMessage() );
-            }
-        });
-    }
-
-    private void weatherInfoDisplay(double latitude, double longitude) {
-        String urlC = String.format("data/2.5/weather?lat=%f&lon=%f&units=metric&appid=%s", latitude, longitude, API);
         WeatherApi weatherApi = RetrofitClient.getClient(WEATEHR_BASE_URL).create(WeatherApi.class);
         weatherApi.todayWeatherServiceCall(urlC).enqueue(new Callback<TodayWeatherService>() {
             @Override
@@ -149,7 +139,7 @@ public class TodayWeatherFragment extends Fragment implements LocationFindInterf
             }
         });
 
-        String urlF = String.format("data/2.5/forecast?lat=%f&lon=%f&units=metric&cnt=7&appid=%s",latitude, longitude, API);
+
 //        String url1 = String.format("data/2.5/forecast?q=%s&units=metric&cnt=7&appid=%s",city,API);
 //        String url1 = String.format("data/2.5/forecast?q=%s&units=Imperial&cnt=7&appid=%s",city,API);
         weatherApi.todayForecast(urlF).enqueue(new Callback<TodayForecast3h>() {

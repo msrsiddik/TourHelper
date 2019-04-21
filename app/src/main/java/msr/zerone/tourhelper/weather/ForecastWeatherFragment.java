@@ -19,14 +19,13 @@ import java.util.Date;
 import java.util.List;
 
 import msr.zerone.tourhelper.R;
-import msr.zerone.tourhelper.weather.LocationFindInterface;
 import msr.zerone.tourhelper.weather.forecastpojo.ForecastWeather;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static msr.zerone.tourhelper.weather.TodayWeatherFragment.API;
-import static msr.zerone.tourhelper.weather.TodayWeatherFragment.WEATEHR_BASE_URL;
+import static msr.zerone.tourhelper.weather.WeatherHomeFragment.API;
+import static msr.zerone.tourhelper.weather.WeatherHomeFragment.WEATEHR_BASE_URL;
 
 
 /**
@@ -35,8 +34,6 @@ import static msr.zerone.tourhelper.weather.TodayWeatherFragment.WEATEHR_BASE_UR
 public class ForecastWeatherFragment extends Fragment implements LocationFindInterface {
     private TextView date1, date2, date3, date4, date5;
     private RecyclerView recyclerView1, recyclerView2, recyclerView3, recyclerView4, recyclerView5;
-
-    private String city;
 
     public ForecastWeatherFragment() {
         // Required empty public constructor
@@ -70,37 +67,23 @@ public class ForecastWeatherFragment extends Fragment implements LocationFindInt
 
     @Override
     public void receiveLocation(double latitude, double longitude) {
-        if (city==null) {
-            forecastByLocation(latitude, longitude);
+        if (WeatherHomeFragment.searchCityName.isEmpty()) {
+            forecastByLocation(latitude, longitude, null);
+        }else {
+            forecastByLocation(0.0, 0.0, WeatherHomeFragment.searchCityName);
         }
 
     }
 
-    @Override
-    public void searchCity(String cityName) {
-        city = cityName;
-        String url = String.format("data/2.5/forecast?q=%s&units=metric&appid=%s",cityName,API);
-        WeatherApi weatherApi = RetrofitClient.getClient(WEATEHR_BASE_URL).create(WeatherApi.class);
-        weatherApi.Forecast(url).enqueue(new Callback<ForecastWeather>() {
-            @Override
-            public void onResponse(Call<ForecastWeather> call, Response<ForecastWeather> response) {
-                if (response.isSuccessful()) {
-                    ForecastWeather forecastWeather = response.body();
-                    double lat = forecastWeather.getCity().getCoord().getLat();
-                    double lon = forecastWeather.getCity().getCoord().getLon();
-                    forecastByLocation(lat,lon);
-                }
-            }
 
-            @Override
-            public void onFailure(Call<ForecastWeather> call, Throwable t) {
-                Log.e("Failure", "onFailure: "+t.getLocalizedMessage() );
-            }
-        });
-    }
+    public void forecastByLocation(double latitude, double longitude, String cityName) {
+        String url="";
+        if (WeatherHomeFragment.searchCityName.isEmpty()) {
+             url = String.format("data/2.5/forecast?lat=%f&lon=%f&units=metric&appid=%s", latitude, longitude, API);
+        }else {
+            url = String.format("data/2.5/forecast?q=%s&units=metric&appid=%s",cityName, API);
+        }
 
-    public void forecastByLocation(double latitude, double longitude) {
-        String url = String.format("data/2.5/forecast?lat=%f&lon=%f&units=metric&appid=%s",latitude, longitude, API);
         WeatherApi weatherApi = RetrofitClient.getClient(WEATEHR_BASE_URL).create(WeatherApi.class);
         weatherApi.Forecast(url).enqueue(new Callback<ForecastWeather>() {
             @Override

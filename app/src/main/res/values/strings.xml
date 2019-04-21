@@ -4,10 +4,22 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
+    <string name="weather_api_key_1">380199723cebdb85ef2e16cc30cee5b6</string>
+    <string name="weather_api_key_2">6be8c480e60abac0e8180f61635c4edf</string>
+    <string name="weather_api_key_3">f4f1e513f8351f02420cfcc85fc08378</string>
+    <string name="weather_api_key_4">d0b941339d6f075686460c7fe0912041</string>
+    <string name="weather_api_key_5">0d383ae00da294a620afc0559c64365c</string>
+
     <string name="degree_mark">\u00B0</string>
     <string name="celsius">&#8451;</string>
     <string name="fahrenheit">&#8457;</string>
+
     <string name="today">Today</string>
     <string name="forecast">Forecast</string>
+
     <string name="search_city">Search City</string>
+
+    <string name="open">Open</string>
+    <string name="close">Close</string>
+
 </resources>

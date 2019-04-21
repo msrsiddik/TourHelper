@@ -1,0 +1,196 @@
+package msr.zerone.tourhelper.eventfragment;
+
+
+import android.app.DatePickerDialog;
+import android.app.Dialog;
+import android.content.Context;
+import android.graphics.drawable.ColorDrawable;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.TextInputLayout;
+import android.support.v4.app.Fragment;
+import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.PopupWindow;
+import android.widget.TextView;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
+import msr.zerone.tourhelper.R;
+import msr.zerone.tourhelper.eventfragment.model.EventModel;
+
+import static msr.zerone.tourhelper.THfirebase.EVENT_REFERENCE;
+
+/**
+ * A simple {@link Fragment} subclass.
+ */
+public class EventHomeFragment extends Fragment{
+    private Context context;
+    private FloatingActionButton floatingActionButton;
+    private PopupWindow popupWindow;
+    private Dialog dialog;
+
+    public EventHomeFragment() {
+        // Required empty public constructor
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        this.context = context;
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_event_home, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        floatingActionButton = view.findViewById(R.id.fabAddEvent);
+
+        floatingActionButton.setOnClickListener(addEventListener);
+
+        final TextView textView = view.findViewById(R.id.textV);
+
+//        FirebaseDatabase database = FirebaseDatabase.getInstance();
+//        DatabaseReference myRef = database.getReference("Event");
+
+        EVENT_REFERENCE.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                EventModel model = dataSnapshot.getValue(EventModel.class);
+                SimpleDateFormat format = new SimpleDateFormat("MMM dd, yyyy");
+                try {
+                    Date date1 = format.parse(model.getCreatedDate());
+                    Date date2 = format.parse(model.getDeparDate());
+                    long diff = date2.getTime() - date1.getTime();
+                    textView.setText(""+diff / (24 * 60 * 60 * 1000));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
+    }
+
+    View.OnClickListener addEventListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
+//            FirebaseDatabase database = FirebaseDatabase.getInstance();
+//            final DatabaseReference mRef = database.getReference("Event");
+
+            View popupView = getLayoutInflater().inflate(R.layout.add_event_layout, null);
+
+            popupWindow = new PopupWindow(popupView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+
+            // If the PopupWindow should be focusable
+            popupWindow.setFocusable(true);
+
+            // If you need the PopupWindow to dismiss when when touched outside
+            popupWindow.setBackgroundDrawable(new ColorDrawable());
+
+            FloatingActionButton close = popupView.findViewById(R.id.closeEventAddWindow);
+            final TextInputLayout eventName, startLocation, destination, estimatedBudget;
+            ImageButton datePicker = popupView.findViewById(R.id.datePicker);
+            final EditText departureDate = popupView.findViewById(R.id.departureDate);
+            Button createEventBtn = popupView.findViewById(R.id.createEventBtn);
+            eventName = popupView.findViewById(R.id.eventName);
+            startLocation = popupView.findViewById(R.id.startLocation);
+            destination = popupView.findViewById(R.id.destination);
+            estimatedBudget = popupView.findViewById(R.id.estimatedBudget);
+
+            createEventBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String createdDate = new SimpleDateFormat("MMM dd, yyyy").format(new Date());
+                    EventModel model = new EventModel(eventName.getEditText().getText().toString(),
+                            startLocation.getEditText().getText().toString(),
+                            destination.getEditText().getText().toString(),
+                            createdDate,
+                            departureDate.getText().toString(),
+                            estimatedBudget.getEditText().getText().toString());
+                    EVENT_REFERENCE.setValue(model);
+                    popupWindow.dismiss();
+                }
+            });
+
+            datePicker.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Calendar todaysCalender = Calendar.getInstance();
+                    int year = todaysCalender.get(Calendar.YEAR);
+                    int month = todaysCalender.get(Calendar.MONTH);
+                    int day = todaysCalender.get(Calendar.DAY_OF_MONTH);
+                    DatePickerDialog datePickerDialog =
+                            new DatePickerDialog(getView().getContext(),
+                                    listener, year, month, day);
+                    datePickerDialog.show();
+
+                }
+                private DatePickerDialog.OnDateSetListener listener =
+                        new DatePickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
+                                SimpleDateFormat simpleDateFormat =
+                                        new SimpleDateFormat("MMM dd, yyyy");
+                                Calendar calendar = Calendar.getInstance();
+                                calendar.set(i, i1, i2);
+
+                                String dob = simpleDateFormat.format(calendar.getTime());
+                                departureDate.setText(dob);
+                            }
+                        };
+
+            });
+
+
+
+
+            int location[] = new int[2];
+
+            // Get the View's(the one that was clicked in the Fragment) location
+            getView().getLocationOnScreen(location);
+
+            // Using location, the PopupWindow will be displayed right under anchorView
+            popupWindow.showAtLocation(getView(), Gravity.NO_GRAVITY,
+                    location[0], location[1] + getView().getHeight());
+
+            close.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    popupWindow.dismiss();
+                }
+            });
+        }
+    };
+
+}
