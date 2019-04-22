@@ -1,9 +1,19 @@
 package msr.zerone.tourhelper.cameraandgallery;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Environment;
 
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
+
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FilenameFilter;
+import java.io.IOException;
 
 public class ImageCollection {
 
@@ -21,7 +31,7 @@ public class ImageCollection {
             {
                 public boolean accept(File dir, String name)
                 {
-                    return name.endsWith(".jpg");
+                    return name.endsWith(".jpg") || name.endsWith(".jpeg");
                 }
             });
 

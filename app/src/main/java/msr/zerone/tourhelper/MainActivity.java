@@ -1,8 +1,9 @@
 package msr.zerone.tourhelper;
 
+import android.content.BroadcastReceiver;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -20,12 +21,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -33,53 +31,101 @@ import java.util.Date;
 import msr.zerone.tourhelper.cameraandgallery.FullImageViewFragment;
 import msr.zerone.tourhelper.cameraandgallery.GalleryFragment;
 import msr.zerone.tourhelper.eventfragment.EventHomeFragment;
+import msr.zerone.tourhelper.networkinfo.MyReceiver;
+import msr.zerone.tourhelper.userfragment.DashboardFragment;
 import msr.zerone.tourhelper.userfragment.LoginFragment;
 import msr.zerone.tourhelper.userfragment.RegistrationFragment;
 import msr.zerone.tourhelper.weather.WeatherHomeFragment;
+
+import static msr.zerone.tourhelper.THfirebase.fAuth;
 
 public class MainActivity extends AppCompatActivity implements FragmentInter, NavigationView.OnNavigationItemSelectedListener {
     private FragmentManager manager;
     private Toolbar mToolbar;
     private DrawerLayout mDrawerLayout;
+    private NavigationView navigationView;
     static final int REQUEST_TAKE_PHOTO = 1;
-    public static String currentPhotoPath;
+    private static String currentPhotoPath;
 
-    FirebaseUser fUser;
+    private BroadcastReceiver myReceiver = null;
+
+    private FirebaseUser user = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        manager = getSupportFragmentManager();
-        if (WeatherHomeFragment.reStartWeather){
-            manager.beginTransaction().replace(R.id.fragmentContainer, new WeatherHomeFragment()).commit();
+        user = fAuth.getCurrentUser();
+        myReceiver = new MyReceiver();
 
+        manager = getSupportFragmentManager();
+        if (user != null){
+            manager.beginTransaction().add(R.id.fragmentContainer, new DashboardFragment()).commit();
         }else {
             manager.beginTransaction().add(R.id.fragmentContainer, new LoginFragment()).commit();
         }
+
         setupToolbarMenu();
         setupNavigationDrawerMenu();
 
+        getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        broadcastIntent();
 
     }
+
+    public void broadcastIntent() {
+        registerReceiver(myReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+    }
+
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//        unregisterReceiver(myReceiver);
+//    }
+
+
 
     private void setupToolbarMenu() {
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mToolbar.setTitle("Tour Helper");
         mToolbar.inflateMenu(R.menu.main_toolbar_menu);
+
+        mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                switch (menuItem.getItemId()){
+                    case R.id.netInfoToolbarItem:
+                        broadcastIntent();
+                        break;
+                    case R.id.cameraToolbarItem:
+                        dispatchTakePictureIntent();
+                        break;
+                    case R.id.loginToolbarItem:
+                        manager.beginTransaction().replace(R.id.fragmentContainer, new LoginFragment()).commit();
+                        break;
+                    case R.id.logOutToolbarItem:
+                        logout();
+                        break;
+                }
+                return false;
+            }
+        });
     }
 
 
     private void setupNavigationDrawerMenu() {
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.dl);
+        navigationView = findViewById(R.id.nav_view);
+        mDrawerLayout = findViewById(R.id.dl);
         navigationView.setNavigationItemSelectedListener(this);
 
         ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string.open, R.string.close);
 
         mDrawerLayout.addDrawerListener(drawerToggle);
         drawerToggle.syncState();
+
+        navAndToolbarItemHide();
+
     }
 
     @Override
@@ -92,7 +138,7 @@ public class MainActivity extends AppCompatActivity implements FragmentInter, Na
                 manager.beginTransaction().replace(R.id.fragmentContainer, new WeatherHomeFragment()).commit();
                 break;
             case R.id.home:
-                manager.beginTransaction().replace(R.id.fragmentContainer, new LoginFragment()).commit();
+                manager.beginTransaction().replace(R.id.fragmentContainer, new DashboardFragment()).commit();
                 break;
             case R.id.camera:
                 dispatchTakePictureIntent();
@@ -103,12 +149,35 @@ public class MainActivity extends AppCompatActivity implements FragmentInter, Na
             case R.id.login:
                 manager.beginTransaction().replace(R.id.fragmentContainer, new LoginFragment()).commit();
                 break;
+            case R.id.logout:
+                logout();
+                break;
             case R.id.eventHome:
                 manager.beginTransaction().replace(R.id.fragmentContainer, new EventHomeFragment()).commit();
                 break;
 
         }
         return true;
+    }
+
+    private void navAndToolbarItemHide(){
+        Menu nav_menu = navigationView.getMenu();
+        Menu toolbar_menu = mToolbar.getMenu();
+        if (user != null) {
+            nav_menu.findItem(R.id.login).setVisible(false);
+            nav_menu.findItem(R.id.logout).setVisible(true);
+            nav_menu.findItem(R.id.eventHome).setVisible(true);
+            nav_menu.findItem(R.id.home).setVisible(true);
+
+            toolbar_menu.findItem(R.id.loginToolbarItem).setVisible(false);
+            toolbar_menu.findItem(R.id.logOutToolbarItem).setVisible(true);
+        }else {
+            nav_menu.findItem(R.id.login).setVisible(true);
+            nav_menu.findItem(R.id.logout).setVisible(false);
+
+            toolbar_menu.findItem(R.id.loginToolbarItem).setVisible(true);
+            toolbar_menu.findItem(R.id.logOutToolbarItem).setVisible(false);
+        }
     }
 
     private void closeDrawer() {
@@ -140,37 +209,39 @@ public class MainActivity extends AppCompatActivity implements FragmentInter, Na
     @Override
     protected void onStart() {
         super.onStart();
-        fUser = FirebaseAuth.getInstance().getCurrentUser();
+        user = fAuth.getCurrentUser();
     }
 
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        MenuItem loginItem = menu.findItem(R.id.loginToolbarItem);
-        MenuItem logoutItem = menu.findItem(R.id.logOutToolbarItem);
-        if(fUser.isEmailVerified()){
-            loginItem.setVisible(false);
-            logoutItem.setVisible(true);
-        }else{
-            loginItem.setVisible(true);
-            logoutItem.setVisible(false);
-        }
-        return super.onPrepareOptionsMenu(menu);
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.loginToolbarItem:
-                Toast.makeText(this, "login", Toast.LENGTH_SHORT).show();
-//                userPreference.setLoginStatus(true);
-                break;
-            case R.id.logOutToolbarItem:
-                Toast.makeText(this, "logout", Toast.LENGTH_SHORT).show();
-//                userPreference.setLoginStatus(false);
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
+
+//    @Override
+//    public boolean onPrepareOptionsMenu(Menu menu) {
+//        MenuItem loginItem = menu.findItem(R.id.loginToolbarItem);
+//        MenuItem logoutItem = menu.findItem(R.id.logOutToolbarItem);
+//        if(user != null){
+//            loginItem.setVisible(false);
+//            logoutItem.setVisible(true);
+//        }else{
+//            loginItem.setVisible(true);
+//            logoutItem.setVisible(false);
+//        }
+//        return true;
+//    }
+
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        switch (item.getItemId()){
+//            case R.id.loginToolbarItem:
+//                Toast.makeText(MainActivity.this, "login", Toast.LENGTH_SHORT).show();
+////                userPreference.setLoginStatus(true);
+//                break;
+//            case R.id.logOutToolbarItem:
+//                Toast.makeText(MainActivity.this, "logout", Toast.LENGTH_SHORT).show();
+////                userPreference.setLoginStatus(false);
+//                break;
+//        }
+//        return super.onOptionsItemSelected(item);
+//    }
 
 
     private File createImageFile() throws IOException {
@@ -212,6 +283,12 @@ public class MainActivity extends AppCompatActivity implements FragmentInter, Na
 
     }
 
+    private void logout() {
+        fAuth.signOut();
+        FragmentInter inter = MainActivity.this;
+        inter.login(false);
+        manager.beginTransaction().replace(R.id.fragmentContainer, new LoginFragment()).commit();
+    }
 
 
     @Override
@@ -222,5 +299,72 @@ public class MainActivity extends AppCompatActivity implements FragmentInter, Na
     @Override
     public void gotoFullImageViewFragment() {
         manager.beginTransaction().addToBackStack("FullImageViewFragment").replace(R.id.fragmentContainer, new FullImageViewFragment()).commit();
+    }
+
+    @Override
+    public void gotoWeatherFragment() {
+        manager.beginTransaction().replace(R.id.fragmentContainer, new WeatherHomeFragment()).commit();
+    }
+
+    @Override
+    public void gotoGalleryFragment() {
+        manager.beginTransaction().replace(R.id.fragmentContainer, new GalleryFragment()).commit();
+    }
+
+    @Override
+    public void gotoEventFragment() {
+        manager.beginTransaction().replace(R.id.fragmentContainer, new EventHomeFragment()).commit();
+    }
+
+    @Override
+    public void gotoMapFragment() {
+
+    }
+
+    @Override
+    public void gotoDashboardFragment() {
+        manager.beginTransaction().replace(R.id.fragmentContainer, new DashboardFragment()).commit();
+    }
+
+    @Override
+    public void login(boolean b) {
+        Menu nav_menu = navigationView.getMenu();
+        Menu toolbar_menu = mToolbar.getMenu();
+
+        user = fAuth.getCurrentUser();
+        if (b) {
+            nav_menu.findItem(R.id.login).setVisible(false);
+            nav_menu.findItem(R.id.logout).setVisible(true);
+            nav_menu.findItem(R.id.eventHome).setVisible(true);
+            nav_menu.findItem(R.id.home).setVisible(true);
+
+            toolbar_menu.findItem(R.id.loginToolbarItem).setVisible(false);
+            toolbar_menu.findItem(R.id.logOutToolbarItem).setVisible(true);
+
+        }else {
+            nav_menu.findItem(R.id.login).setVisible(true);
+            nav_menu.findItem(R.id.logout).setVisible(false);
+
+            toolbar_menu.findItem(R.id.loginToolbarItem).setVisible(false);
+            toolbar_menu.findItem(R.id.logOutToolbarItem).setVisible(true);
+
+        }
+    }
+
+    @Override
+    public void onNetworkConnectionChanged(String status) {
+        Menu netIconToolbar = mToolbar.getMenu();
+        switch (status){
+            case "Wifi enabled":
+                netIconToolbar.findItem(R.id.netInfoToolbarItem).setIcon(R.drawable.ic_wifi);
+                break;
+            case "Mobile data enabled":
+                netIconToolbar.findItem(R.id.netInfoToolbarItem).setIcon(R.drawable.ic_signal_cellular);
+                break;
+            case "No internet is available":
+            case "No Internet Connection":
+                netIconToolbar.findItem(R.id.netInfoToolbarItem).setIcon(R.drawable.ic_airplanemode);
+                break;
+        }
     }
 }

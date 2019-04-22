@@ -1,27 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:id="@+id/home"
-        android:title="Home"/>
+    <group android:checkableBehavior="single">
+        <item android:id="@+id/home"
+            android:visible="false"
+            android:title="Home"/>
 
-    <item android:id="@+id/camera"
-        android:title="Camera"/>
+        <item android:id="@+id/camera"
+            android:title="Camera"/>
 
-    <item android:id="@+id/gallery"
-        android:title="Gallery"/>
+        <item android:id="@+id/gallery"
+            android:title="Gallery"/>
 
-    <item android:id="@+id/eventHome"
-        android:title="Event"/>
+        <item android:id="@+id/eventHome"
+            android:visible="false"
+            android:title="Event"/>
 
-    <item android:id="@+id/login"
-        android:title="Login"/>
+        <item android:id="@+id/login"
+            android:title="Login"/>
 
-    <item android:id="@+id/weather"
-        android:icon="@drawable/weather_icon"
-        android:title="Weather"/>
+        <item android:id="@+id/weather"
+            android:icon="@drawable/weather_icon"
+            android:title="Weather"/>
 
-    <item android:id="@+id/logout"
-        android:visible="false"
-        android:title="Log Out"/>
+        <item android:id="@+id/logout"
+            android:title="Log Out"/>
+    </group>
 
 </menu>

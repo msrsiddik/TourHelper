@@ -18,14 +18,15 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import msr.zerone.tourhelper.R;
 import msr.zerone.tourhelper.userfragment.model.RegistrationModel;
 
 import static android.support.constraint.Constraints.TAG;
+import static msr.zerone.tourhelper.THfirebase.fAuth;
+import static msr.zerone.tourhelper.THfirebase.fUser;
+import static msr.zerone.tourhelper.THfirebase.userReference;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -34,11 +35,6 @@ public class RegistrationFragment extends Fragment {
     private Context context;
     private TextInputLayout fullNameInputId, regiEmailInputId, regiPhoneNumberInputId, regiPassInputId;
     private Button registrationBtnId;
-
-    private FirebaseDatabase fDatabase;
-    private FirebaseAuth fAuth;
-    private DatabaseReference fReference;
-    private FirebaseUser fUser;
 
     public RegistrationFragment() {
         // Required empty public constructor
@@ -69,10 +65,6 @@ public class RegistrationFragment extends Fragment {
         regiPassInputId = view.findViewById(R.id.regiPassInputId);
         registrationBtnId = view.findViewById(R.id.registrationBtnId);
 
-        fDatabase = FirebaseDatabase.getInstance();
-        fAuth = FirebaseAuth.getInstance();
-        fReference = fDatabase.getReference("AppUser");
-
         registrationBtnId.setOnClickListener(registationListener);
 
     }
@@ -85,19 +77,6 @@ public class RegistrationFragment extends Fragment {
             String email = regiEmailInputId.getEditText().getText().toString();
             String pass = regiPassInputId.getEditText().getText().toString();
 
-//            if (name.equals("")){
-//                fullNameInputId.setError("Enter Your Name...");
-//            }
-//            if (name.equals("")){
-//                regiEmailInputId.setError("Enter real email");
-//            }
-//            if (name.equals("")){
-//                regiPhoneNumberInputId.setError("Enter your mobile number");
-//            }
-//            if (name.equals("")){
-//                regiPassInputId.setError("Enter password greater than 6 character");
-//            }
-
             final RegistrationModel model = new RegistrationModel(name, phone, email, pass);
 
             fAuth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -108,7 +87,7 @@ public class RegistrationFragment extends Fragment {
                         fUser = FirebaseAuth.getInstance().getCurrentUser();
                         if (!fUser.getUid().isEmpty()){
                             String id = fUser.getUid();
-                            fReference.child(id).setValue(model);
+                            userReference.child(id).setValue(model);
                         }
                     }else {
                         Log.e(TAG, "Not Complete: ");

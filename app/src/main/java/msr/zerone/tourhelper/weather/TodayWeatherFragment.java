@@ -128,7 +128,7 @@ public class TodayWeatherFragment extends Fragment implements LocationFindInterf
                     humidity.setText("Humidity "+today.getMain().getHumidity()+"%");
 
                     sunrise.setText("Sunrise "+new SimpleDateFormat("h:mm a").format(new Date(today.getSys().getSunrise()*1000)));
-                    sunset.setText("Sunrise "+new SimpleDateFormat("h:mm a").format(new Date(today.getSys().getSunset()*1000)));
+                    sunset.setText("Sunset "+new SimpleDateFormat("h:mm a").format(new Date(today.getSys().getSunset()*1000)));
 
                 }
             }

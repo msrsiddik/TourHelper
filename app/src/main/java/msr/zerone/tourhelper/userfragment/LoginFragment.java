@@ -6,22 +6,22 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
-import android.util.Log;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 
 import msr.zerone.tourhelper.FragmentInter;
 import msr.zerone.tourhelper.R;
-import msr.zerone.tourhelper.THfirebase;
-import msr.zerone.tourhelper.userfragment.model.RegistrationModel;
+
+import static msr.zerone.tourhelper.THfirebase.fAuth;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -29,10 +29,6 @@ import msr.zerone.tourhelper.userfragment.model.RegistrationModel;
 public class LoginFragment extends Fragment {
     private TextInputLayout loginInputEmailId, loginInputPassId;
     private Button loginBtnId, signUpBtnId;
-
-//    private FirebaseDatabase database;
-//    private DatabaseReference reference;
-//    private DatabaseReference userRef;
 
     public LoginFragment() {
         // Required empty public constructor
@@ -54,23 +50,20 @@ public class LoginFragment extends Fragment {
         loginBtnId = view.findViewById(R.id.loginBtnId);
         signUpBtnId = view.findViewById(R.id.signUpBtnId);
 
-//        database = FirebaseDatabase.getInstance();
-//        reference = database.getReference("AppUser");
-
         loginBtnId.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                THfirebase.APP_USER_REFERENCE.addValueEventListener(new ValueEventListener() {
+                String email = loginInputEmailId.getEditText().getText().toString();
+                String pass = loginInputPassId.getEditText().getText().toString();
+                fAuth.signInWithEmailAndPassword(email,pass).addOnCompleteListener( new OnCompleteListener<AuthResult>() {
                     @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        RegistrationModel model = dataSnapshot.getValue(RegistrationModel.class);
-                        Log.e("ValueEventListener", "onDataChange: "+model.getEmail());
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                        Log.e("DatabaseError", "onDataChange: "+databaseError.getMessage());
-
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()){
+                            FragmentInter inter = (FragmentInter) getActivity();
+                            inter.login(true);
+                            inter.gotoDashboardFragment();
+                            Toast.makeText(getContext(), "Successful", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
             }

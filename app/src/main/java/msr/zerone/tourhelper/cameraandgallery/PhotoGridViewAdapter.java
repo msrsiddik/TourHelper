@@ -47,7 +47,7 @@ public class PhotoGridViewAdapter extends BaseAdapter {
         } else {
             mImageView = (ImageView) convertView;
         }
-        Picasso.get().load(uri).resize(200,200).into(mImageView);
+        Picasso.get().load(uri).resize(150,150).into(mImageView);
 //        mImageView.setImageURI(uri);
         return mImageView;
     }

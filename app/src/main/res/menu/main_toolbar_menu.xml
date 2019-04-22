@@ -1,8 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/netInfoToolbarItem"
+        app:showAsAction="always"
+        android:title="Network"/>
+
+    <item android:id="@+id/cameraToolbarItem"
+        app:showAsAction="always"
+        android:icon="@drawable/camera_ic"
+        android:title="Camera"/>
 
     <item android:id="@+id/loginToolbarItem"
         android:title="Login"/>
+
     <item android:id="@+id/logOutToolbarItem"
         android:title="Logout"/>
 

@@ -2,7 +2,6 @@ package msr.zerone.tourhelper.eventfragment;
 
 
 import android.app.DatePickerDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -11,7 +10,8 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
-import android.util.Log;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,30 +23,34 @@ import android.widget.ImageButton;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import msr.zerone.tourhelper.R;
 import msr.zerone.tourhelper.eventfragment.model.EventModel;
 
-import static msr.zerone.tourhelper.THfirebase.EVENT_REFERENCE;
+import static msr.zerone.tourhelper.THfirebase.eventReference;
+import static msr.zerone.tourhelper.THfirebase.fAuth;
+import static msr.zerone.tourhelper.THfirebase.fDatabase;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class EventHomeFragment extends Fragment{
     private Context context;
+    private RecyclerView recyclerView;
     private FloatingActionButton floatingActionButton;
     private PopupWindow popupWindow;
-    private Dialog dialog;
 
     public EventHomeFragment() {
         // Required empty public constructor
@@ -68,28 +72,40 @@ public class EventHomeFragment extends Fragment{
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         floatingActionButton = view.findViewById(R.id.fabAddEvent);
+        recyclerView = view.findViewById(R.id.recyclerEventView);
 
-        floatingActionButton.setOnClickListener(addEventListener);
 
-        final TextView textView = view.findViewById(R.id.textV);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-//        FirebaseDatabase database = FirebaseDatabase.getInstance();
-//        DatabaseReference myRef = database.getReference("Event");
-
-        EVENT_REFERENCE.addValueEventListener(new ValueEventListener() {
+        final List<EventModel> eventModels = new ArrayList<>();
+        eventReference.addChildEventListener(new ChildEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 EventModel model = dataSnapshot.getValue(EventModel.class);
-                SimpleDateFormat format = new SimpleDateFormat("MMM dd, yyyy");
-                try {
-                    Date date1 = format.parse(model.getCreatedDate());
-                    Date date2 = format.parse(model.getDeparDate());
-                    long diff = date2.getTime() - date1.getTime();
-                    textView.setText(""+diff / (24 * 60 * 60 * 1000));
-                } catch (Exception e) {
-                    e.printStackTrace();
+                FirebaseUser user  = fAuth.getCurrentUser();
+                if (user.getUid().equals(model.getUid())){
+                    eventModels.add(model);
                 }
+                EventRecyclerAdapter adapter = new EventRecyclerAdapter(context,eventModels);
+                adapter.notifyDataSetChanged();
+                recyclerView.setAdapter(adapter);
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
             }
 
             @Override
@@ -99,14 +115,14 @@ public class EventHomeFragment extends Fragment{
         });
 
 
+        floatingActionButton.setOnClickListener(addEventListener);
+
+
     }
 
     View.OnClickListener addEventListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-
-//            FirebaseDatabase database = FirebaseDatabase.getInstance();
-//            final DatabaseReference mRef = database.getReference("Event");
 
             View popupView = getLayoutInflater().inflate(R.layout.add_event_layout, null);
 
@@ -131,14 +147,15 @@ public class EventHomeFragment extends Fragment{
             createEventBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    FirebaseUser user = fAuth.getCurrentUser();
                     String createdDate = new SimpleDateFormat("MMM dd, yyyy").format(new Date());
-                    EventModel model = new EventModel(eventName.getEditText().getText().toString(),
+                    EventModel model = new EventModel(user.getUid(),eventName.getEditText().getText().toString(),
                             startLocation.getEditText().getText().toString(),
                             destination.getEditText().getText().toString(),
                             createdDate,
                             departureDate.getText().toString(),
                             estimatedBudget.getEditText().getText().toString());
-                    EVENT_REFERENCE.setValue(model);
+                    eventReference.push().setValue(model);
                     popupWindow.dismiss();
                 }
             });
