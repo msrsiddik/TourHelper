@@ -44,4 +44,12 @@
         <item>Train Station</item>
     </string-array>
 
+    <string-array name="cost_category">
+        <item>Road</item>
+        <item>Meal</item>
+        <item>Medical</item>
+        <item>Shopping</item>
+        <item>Tickets</item>
+    </string-array>
+
 </resources>

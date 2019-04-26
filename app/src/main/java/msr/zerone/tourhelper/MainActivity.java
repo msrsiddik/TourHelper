@@ -19,7 +19,6 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseUser;
 
@@ -336,6 +335,7 @@ public class MainActivity extends AppCompatActivity implements FragmentInter, Na
     public void gotoDashboardFragment() {
         manager.beginTransaction().replace(R.id.fragmentContainer, new DashboardFragment()).commit();
     }
+
 
     @Override
     public void login(boolean b) {

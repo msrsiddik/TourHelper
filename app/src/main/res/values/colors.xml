@@ -4,4 +4,6 @@
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
     <color name="grey">#8c8c8c</color>
+    <color name="cardViewTransparence">#1E000000</color>
+    <color name="textBgC">#D6D7D7</color>
 </resources>
