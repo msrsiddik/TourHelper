@@ -12,8 +12,10 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.ContextMenu;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -22,6 +24,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -79,6 +82,8 @@ public class EventHomeFragment extends Fragment{
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
+
+
         final List<EventModel> eventModels = new ArrayList<>();
         eventReference.addChildEventListener(new ChildEventListener() {
             @Override
@@ -91,6 +96,7 @@ public class EventHomeFragment extends Fragment{
                 EventRecyclerAdapter adapter = new EventRecyclerAdapter(context,eventModels);
                 adapter.notifyDataSetChanged();
                 recyclerView.setAdapter(adapter);
+
             }
 
             @Override
@@ -117,7 +123,6 @@ public class EventHomeFragment extends Fragment{
 
         floatingActionButton.setOnClickListener(addEventListener);
 
-
     }
 
     View.OnClickListener addEventListener = new View.OnClickListener() {
@@ -136,8 +141,10 @@ public class EventHomeFragment extends Fragment{
 
             FloatingActionButton close = popupView.findViewById(R.id.closeEventAddWindow);
             final TextInputLayout eventName, startLocation, destination, estimatedBudget;
-            ImageButton datePicker = popupView.findViewById(R.id.datePicker);
+            ImageButton departureDatePicker = popupView.findViewById(R.id.departureDatePicker);
             final EditText departureDate = popupView.findViewById(R.id.departureDate);
+            ImageButton returnDatePicker = popupView.findViewById(R.id.returnDatePicker);
+            final EditText returnDate = popupView.findViewById(R.id.returnDate);
             Button createEventBtn = popupView.findViewById(R.id.createEventBtn);
             eventName = popupView.findViewById(R.id.eventName);
             startLocation = popupView.findViewById(R.id.startLocation);
@@ -149,18 +156,20 @@ public class EventHomeFragment extends Fragment{
                 public void onClick(View v) {
                     FirebaseUser user = fAuth.getCurrentUser();
                     String createdDate = new SimpleDateFormat("MMM dd, yyyy").format(new Date());
-                    EventModel model = new EventModel(user.getUid(),eventName.getEditText().getText().toString(),
+                    String id = eventReference.push().getKey();
+                    EventModel model = new EventModel(id,user.getUid(),eventName.getEditText().getText().toString(),
                             startLocation.getEditText().getText().toString(),
                             destination.getEditText().getText().toString(),
                             createdDate,
                             departureDate.getText().toString(),
+                            returnDate.getText().toString(),
                             estimatedBudget.getEditText().getText().toString());
-                    eventReference.push().setValue(model);
+                    eventReference.child(id).setValue(model);
                     popupWindow.dismiss();
                 }
             });
 
-            datePicker.setOnClickListener(new View.OnClickListener() {
+            departureDatePicker.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Calendar todaysCalender = Calendar.getInstance();
@@ -171,7 +180,6 @@ public class EventHomeFragment extends Fragment{
                             new DatePickerDialog(getView().getContext(),
                                     listener, year, month, day);
                     datePickerDialog.show();
-
                 }
                 private DatePickerDialog.OnDateSetListener listener =
                         new DatePickerDialog.OnDateSetListener() {
@@ -188,6 +196,34 @@ public class EventHomeFragment extends Fragment{
                         };
 
             });
+
+            returnDatePicker.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Calendar todaysCalender = Calendar.getInstance();
+                                int year = todaysCalender.get(Calendar.YEAR);
+                                int month = todaysCalender.get(Calendar.MONTH);
+                                int day = todaysCalender.get(Calendar.DAY_OF_MONTH);
+                                DatePickerDialog datePickerDialog =
+                                        new DatePickerDialog(getView().getContext(),
+                                                listener, year, month, day);
+                                datePickerDialog.show();
+                            }
+                            private DatePickerDialog.OnDateSetListener listener =
+                                    new DatePickerDialog.OnDateSetListener() {
+                                        @Override
+                                        public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
+                                            SimpleDateFormat simpleDateFormat =
+                                                    new SimpleDateFormat("MMM dd, yyyy");
+                                            Calendar calendar = Calendar.getInstance();
+                                            calendar.set(i, i1, i2);
+
+                                            String dob = simpleDateFormat.format(calendar.getTime());
+                                            returnDate.setText(dob);
+                                        }
+                                    };
+
+                        });
 
 
 

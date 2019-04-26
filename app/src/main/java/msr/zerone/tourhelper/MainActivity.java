@@ -31,6 +31,7 @@ import java.util.Date;
 import msr.zerone.tourhelper.cameraandgallery.FullImageViewFragment;
 import msr.zerone.tourhelper.cameraandgallery.GalleryFragment;
 import msr.zerone.tourhelper.eventfragment.EventHomeFragment;
+import msr.zerone.tourhelper.map.MapFragment;
 import msr.zerone.tourhelper.networkinfo.MyReceiver;
 import msr.zerone.tourhelper.userfragment.DashboardFragment;
 import msr.zerone.tourhelper.userfragment.LoginFragment;
@@ -60,9 +61,13 @@ public class MainActivity extends AppCompatActivity implements FragmentInter, Na
         myReceiver = new MyReceiver();
 
         manager = getSupportFragmentManager();
-        if (user != null){
+        if (user != null && !WeatherHomeFragment.reStartWeather){
             manager.beginTransaction().add(R.id.fragmentContainer, new DashboardFragment()).commit();
-        }else {
+        }
+        else if (WeatherHomeFragment.reStartWeather){
+            manager.beginTransaction().replace(R.id.fragmentContainer, new WeatherHomeFragment()).commit();
+        }
+        else {
             manager.beginTransaction().add(R.id.fragmentContainer, new LoginFragment()).commit();
         }
 
@@ -135,16 +140,16 @@ public class MainActivity extends AppCompatActivity implements FragmentInter, Na
 
         switch (menuItem.getItemId()){
             case R.id.weather:
-                manager.beginTransaction().replace(R.id.fragmentContainer, new WeatherHomeFragment()).commit();
+                gotoWeatherFragment();
                 break;
             case R.id.home:
-                manager.beginTransaction().replace(R.id.fragmentContainer, new DashboardFragment()).commit();
+                gotoDashboardFragment();
                 break;
             case R.id.camera:
                 dispatchTakePictureIntent();
                 break;
             case R.id.gallery:
-                manager.beginTransaction().replace(R.id.fragmentContainer, new GalleryFragment()).commit();
+                gotoGalleryFragment();
                 break;
             case R.id.login:
                 manager.beginTransaction().replace(R.id.fragmentContainer, new LoginFragment()).commit();
@@ -152,8 +157,11 @@ public class MainActivity extends AppCompatActivity implements FragmentInter, Na
             case R.id.logout:
                 logout();
                 break;
+            case R.id.map:
+                gotoMapFragment();
+                break;
             case R.id.eventHome:
-                manager.beginTransaction().replace(R.id.fragmentContainer, new EventHomeFragment()).commit();
+                gotoEventFragment();
                 break;
 
         }
@@ -168,6 +176,7 @@ public class MainActivity extends AppCompatActivity implements FragmentInter, Na
             nav_menu.findItem(R.id.logout).setVisible(true);
             nav_menu.findItem(R.id.eventHome).setVisible(true);
             nav_menu.findItem(R.id.home).setVisible(true);
+            nav_menu.findItem(R.id.map).setVisible(true);
 
             toolbar_menu.findItem(R.id.loginToolbarItem).setVisible(false);
             toolbar_menu.findItem(R.id.logOutToolbarItem).setVisible(true);
@@ -281,6 +290,8 @@ public class MainActivity extends AppCompatActivity implements FragmentInter, Na
             }
         }
 
+        gotoGalleryFragment();
+
     }
 
     private void logout() {
@@ -318,7 +329,7 @@ public class MainActivity extends AppCompatActivity implements FragmentInter, Na
 
     @Override
     public void gotoMapFragment() {
-
+        manager.beginTransaction().replace(R.id.fragmentContainer, new MapFragment()).commit();
     }
 
     @Override
@@ -337,6 +348,7 @@ public class MainActivity extends AppCompatActivity implements FragmentInter, Na
             nav_menu.findItem(R.id.logout).setVisible(true);
             nav_menu.findItem(R.id.eventHome).setVisible(true);
             nav_menu.findItem(R.id.home).setVisible(true);
+            nav_menu.findItem(R.id.map).setVisible(true);
 
             toolbar_menu.findItem(R.id.loginToolbarItem).setVisible(false);
             toolbar_menu.findItem(R.id.logOutToolbarItem).setVisible(true);

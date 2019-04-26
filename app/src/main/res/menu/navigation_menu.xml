@@ -23,6 +23,11 @@
             android:icon="@drawable/weather_icon"
             android:title="Weather"/>
 
+        <item android:id="@+id/map"
+            android:visible="false"
+            android:icon="@drawable/weather_icon"
+            android:title="Map"/>
+
         <item android:id="@+id/logout"
             android:title="Log Out"/>
     </group>

@@ -12,8 +12,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.AuthResult;
@@ -79,21 +81,29 @@ public class RegistrationFragment extends Fragment {
 
             final RegistrationModel model = new RegistrationModel(name, phone, email, pass);
 
-            fAuth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(@NonNull Task<AuthResult> task) {
-                    if (task.isComplete()){
-                        Log.e(TAG, "onComplete: ");
-                        fUser = FirebaseAuth.getInstance().getCurrentUser();
-                        if (!fUser.getUid().isEmpty()){
-                            String id = fUser.getUid();
-                            userReference.child(id).setValue(model);
+            if (!name.isEmpty() && !phone.isEmpty() && !email.isEmpty() && !pass.isEmpty() ) {
+                fAuth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isComplete()) {
+                            Log.e(TAG, "onComplete: ");
+                            fUser = FirebaseAuth.getInstance().getCurrentUser();
+                            if (!fUser.getUid().isEmpty()) {
+                                String id = fUser.getUid();
+                                userReference.child(id).setValue(model);
+                            }
                         }
-                    }else {
-                        Log.e(TAG, "Not Complete: ");
+                        else {
+                            Log.e(TAG, "Not Complete: ");
+                        }
                     }
-                }
-            });
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(context, ""+e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
         }
     };
 

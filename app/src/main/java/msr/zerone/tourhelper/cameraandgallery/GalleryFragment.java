@@ -6,7 +6,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -29,6 +31,7 @@ public class GalleryFragment extends Fragment {
 
     private ImageCollection collection;
     private File[] photos;
+    private File deleteItem;
 
     public GalleryFragment() {
         // Required empty public constructor
@@ -75,17 +78,39 @@ public class GalleryFragment extends Fragment {
         photo_gridview.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getContext(), "Delete "+(position+1), Toast.LENGTH_SHORT).show();
-                photos[position].delete();
+//                Toast.makeText(getContext(), "Delete "+(position+1), Toast.LENGTH_SHORT).show();
+                registerForContextMenu(photo_gridview);
+                deleteItem = photos[position];
                 return false;
             }
         });
+
     }
 
     @Override
     public void onResume() {
         super.onResume();
         gridSetItem();
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        menu.setHeaderTitle("Select the Action");
+        menu.add(0,v.getId(),0,"Delete (Only local storage)");
+        menu.add(0,v.getId(),0,"Delete (local and cloud storage)");
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        CharSequence i = item.getTitle();
+        if (i.equals("Delete (Only local storage)")) {
+            deleteItem.delete();
+            gridSetItem();
+        }else if (i.equals("Delete (local and cloud storage)")){
+            Toast.makeText(getContext(), ""+item.getItemId(), Toast.LENGTH_SHORT).show();
+        }
+        return true;
     }
 
     private void gridSetItem(){

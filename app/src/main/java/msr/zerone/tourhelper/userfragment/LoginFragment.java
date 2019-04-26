@@ -15,7 +15,9 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseNetworkException;
 import com.google.firebase.auth.AuthResult;
 
 import msr.zerone.tourhelper.FragmentInter;
@@ -55,17 +57,35 @@ public class LoginFragment extends Fragment {
             public void onClick(View v) {
                 String email = loginInputEmailId.getEditText().getText().toString();
                 String pass = loginInputPassId.getEditText().getText().toString();
-                fAuth.signInWithEmailAndPassword(email,pass).addOnCompleteListener( new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()){
-                            FragmentInter inter = (FragmentInter) getActivity();
-                            inter.login(true);
-                            inter.gotoDashboardFragment();
-                            Toast.makeText(getContext(), "Successful", Toast.LENGTH_SHORT).show();
+                if (!email.isEmpty() && !pass.isEmpty()) {
+                    fAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                FragmentInter inter = (FragmentInter) getActivity();
+                                inter.login(true);
+                                inter.gotoDashboardFragment();
+                                Toast.makeText(getContext(), "Successful", Toast.LENGTH_SHORT).show();
+                            }
+//                            else {
+//                                try{
+//                                    throw task.getException();
+//                                }catch (FirebaseNetworkException e){
+//                                    Toast.makeText(getContext(), "Internet Connection And try again", Toast.LENGTH_SHORT).show();
+//                                }catch (Exception e) {
+//                                    e.printStackTrace();
+//                                }
+//                            }
                         }
-                    }
-                });
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(getContext(), ""+e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                } else {
+                    Toast.makeText(getContext(), "Please enter email and password", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 

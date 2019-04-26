@@ -10,6 +10,8 @@
     <string name="weather_api_key_4">d0b941339d6f075686460c7fe0912041</string>
     <string name="weather_api_key_5">0d383ae00da294a620afc0559c64365c</string>
 
+    <string name="nearby_place_api_key">AIzaSyBxIa_N-bqyH6P687uXWEwz2FW2JJaYD1I</string>
+
     <string name="degree_mark">\u00B0</string>
     <string name="celsius">&#8451;</string>
     <string name="fahrenheit">&#8457;</string>
@@ -21,5 +23,25 @@
 
     <string name="open">Open</string>
     <string name="close">Close</string>
+
+    <string-array name="nearby_place_type">
+        <item>Airport</item>
+        <item>ATM</item>
+        <item>Bank</item>
+        <item>Bus Station</item>
+        <item>Cafe</item>
+        <item>Car Repair</item>
+        <item>Gas Station</item>
+        <item>Hospital</item>
+        <item>Jewelry Store</item>
+        <item>Movie Theater</item>
+        <item>Park</item>
+        <item>Police</item>
+        <item>Restaurant</item>
+        <item>Shopping Mall</item>
+        <item>Super Market</item>
+        <item>Taxi Stand</item>
+        <item>Train Station</item>
+    </string-array>
 
 </resources>

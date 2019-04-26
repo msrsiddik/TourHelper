@@ -1,28 +1,29 @@
 package msr.zerone.tourhelper.eventfragment.model;
 
 public class EventModel {
-    private String uid, name, startloc, destin, createdDate, deparDate, budget;
+    private String eventId, uid, name, startloc, destin, createdDate, deparDate, returnDate, budget;
 
     public EventModel() {
     }
 
-    public EventModel(String uid, String name, String startloc, String destin, String createdDate, String deparDate, String budget) {
+    public EventModel(String eventId, String uid, String name, String startloc, String destin, String createdDate, String deparDate, String returnDate, String budget) {
+        this.eventId = eventId;
         this.uid = uid;
         this.name = name;
         this.startloc = startloc;
         this.destin = destin;
         this.createdDate = createdDate;
         this.deparDate = deparDate;
+        this.returnDate = returnDate;
         this.budget = budget;
     }
 
-    public EventModel(String name, String startloc, String destin, String createdDate, String deparDate, String budget) {
-        this.name = name;
-        this.startloc = startloc;
-        this.destin = destin;
-        this.createdDate = createdDate;
-        this.deparDate = deparDate;
-        this.budget = budget;
+    public String getEventId() {
+        return eventId;
+    }
+
+    public void setEventId(String eventId) {
+        this.eventId = eventId;
     }
 
     public String getUid() {
@@ -71,6 +72,14 @@ public class EventModel {
 
     public void setDeparDate(String deparDate) {
         this.deparDate = deparDate;
+    }
+
+    public String getReturnDate() {
+        return returnDate;
+    }
+
+    public void setReturnDate(String returnDate) {
+        this.returnDate = returnDate;
     }
 
     public String getBudget() {
