@@ -29,6 +29,7 @@ import java.util.Date;
 
 import msr.zerone.tourhelper.cameraandgallery.FullImageViewFragment;
 import msr.zerone.tourhelper.cameraandgallery.GalleryFragment;
+import msr.zerone.tourhelper.cameraandgallery.ImageCollection;
 import msr.zerone.tourhelper.eventfragment.EventHomeFragment;
 import msr.zerone.tourhelper.map.MapFragment;
 import msr.zerone.tourhelper.networkinfo.MyReceiver;
@@ -108,6 +109,10 @@ public class MainActivity extends AppCompatActivity implements FragmentInter, Na
                     case R.id.loginToolbarItem:
                         manager.beginTransaction().replace(R.id.fragmentContainer, new LoginFragment()).commit();
                         break;
+                    case R.id.uploadPhotos:
+                        ImageCollection collection = new ImageCollection();
+                        collection.uploadPhoto(MainActivity.this);
+                        break;
                     case R.id.logOutToolbarItem:
                         logout();
                         break;
@@ -179,12 +184,14 @@ public class MainActivity extends AppCompatActivity implements FragmentInter, Na
 
             toolbar_menu.findItem(R.id.loginToolbarItem).setVisible(false);
             toolbar_menu.findItem(R.id.logOutToolbarItem).setVisible(true);
+            toolbar_menu.findItem(R.id.uploadPhotos).setVisible(true);
         }else {
             nav_menu.findItem(R.id.login).setVisible(true);
             nav_menu.findItem(R.id.logout).setVisible(false);
 
             toolbar_menu.findItem(R.id.loginToolbarItem).setVisible(true);
             toolbar_menu.findItem(R.id.logOutToolbarItem).setVisible(false);
+            toolbar_menu.findItem(R.id.uploadPhotos).setVisible(false);
         }
     }
 
@@ -352,6 +359,7 @@ public class MainActivity extends AppCompatActivity implements FragmentInter, Na
 
             toolbar_menu.findItem(R.id.loginToolbarItem).setVisible(false);
             toolbar_menu.findItem(R.id.logOutToolbarItem).setVisible(true);
+            toolbar_menu.findItem(R.id.uploadPhotos).setVisible(true);
 
         }else {
             nav_menu.findItem(R.id.login).setVisible(true);
@@ -359,6 +367,7 @@ public class MainActivity extends AppCompatActivity implements FragmentInter, Na
 
             toolbar_menu.findItem(R.id.loginToolbarItem).setVisible(false);
             toolbar_menu.findItem(R.id.logOutToolbarItem).setVisible(true);
+            toolbar_menu.findItem(R.id.uploadPhotos).setVisible(true);
 
         }
     }

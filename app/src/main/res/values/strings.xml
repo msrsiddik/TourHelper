@@ -23,6 +23,7 @@
 
     <string name="open">Open</string>
     <string name="close">Close</string>
+    <string name="vertical_ellipsis">&#8942;</string>
 
     <string-array name="nearby_place_type">
         <item>Airport</item>
@@ -50,6 +51,7 @@
         <item>Medical</item>
         <item>Shopping</item>
         <item>Tickets</item>
+        <item>Hotel</item>
     </string-array>
 
 </resources>

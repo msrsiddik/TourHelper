@@ -82,7 +82,8 @@
                             android:layout_weight="6"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:hint="Departure date"/>
+                            android:hint="Departure date"
+                            android:editable="false"/>
                         <ImageButton
                             android:id="@+id/departureDatePicker"
                             android:layout_weight="1"
@@ -101,7 +102,8 @@
                         android:layout_weight="6"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:hint="Return date"/>
+                        android:hint="Return date"
+                        android:editable="false"/>
                     <ImageButton
                         android:id="@+id/returnDatePicker"
                         android:layout_weight="1"

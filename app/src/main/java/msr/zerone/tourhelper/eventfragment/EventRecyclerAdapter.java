@@ -47,6 +47,8 @@ import msr.zerone.tourhelper.calculation.SumCalculator;
 import msr.zerone.tourhelper.eventfragment.model.Budget;
 import msr.zerone.tourhelper.eventfragment.model.Cost;
 import msr.zerone.tourhelper.eventfragment.model.EventModel;
+import msr.zerone.tourhelper.userfragment.DashboardFragment;
+import msr.zerone.tourhelper.userfragment.UserPreference;
 
 import static msr.zerone.tourhelper.THfirebase.budgetReference;
 import static msr.zerone.tourhelper.THfirebase.costReference;
@@ -57,12 +59,12 @@ public class EventRecyclerAdapter extends RecyclerView.Adapter<EventRecyclerAdap
 
     private Context context;
     private List<EventModel> eventModelList;
-//    private Dialog dialog;
+    private UserPreference preference;
 
     public EventRecyclerAdapter(Context context, List<EventModel> eventModelList) {
         this.context = context;
         this.eventModelList = eventModelList;
-//        dialog = new Dialog(context);
+        preference = new UserPreference(context);
     }
 
     @NonNull
@@ -78,6 +80,7 @@ public class EventRecyclerAdapter extends RecyclerView.Adapter<EventRecyclerAdap
 
         eventHolder.eventName.setText(model.getName());
         eventHolder.eventDate.setText(model.getDeparDate());
+        eventHolder.returnDateView.setText(model.getReturnDate());
 
         eventHolder.eventItemBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -443,6 +446,10 @@ public class EventRecyclerAdapter extends RecyclerView.Adapter<EventRecyclerAdap
                             });
 
                         }
+                        else if (menuItem.getItemId() == R.id.set_home){
+                            preference.setHomeEventId(model.getEventId());
+                            preference.setHomeuId(model.getUid());
+                        }
                         return false;
                     }
                 });
@@ -458,12 +465,13 @@ public class EventRecyclerAdapter extends RecyclerView.Adapter<EventRecyclerAdap
     }
 
     class EventHolder extends RecyclerView.ViewHolder {
-        TextView eventName, eventDate, option;
+        TextView eventName, eventDate, returnDateView, option;
         CardView eventItemBtn;
         public EventHolder(@NonNull View itemView) {
             super(itemView);
             eventName = itemView.findViewById(R.id.eventNameView);
             eventDate = itemView.findViewById(R.id.eventDateView);
+            returnDateView = itemView.findViewById(R.id.returnDateView);
             option = itemView.findViewById(R.id.option);
             eventItemBtn = itemView.findViewById(R.id.eventItemBtn);
         }

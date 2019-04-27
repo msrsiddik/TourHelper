@@ -108,7 +108,9 @@ public class GalleryFragment extends Fragment {
             deleteItem.delete();
             gridSetItem();
         }else if (i.equals("Delete (local and cloud storage)")){
-            Toast.makeText(getContext(), ""+item.getItemId(), Toast.LENGTH_SHORT).show();
+            collection.deletePhoto(deleteItem, getContext());
+            deleteItem.delete();
+            gridSetItem();
         }
         return true;
     }

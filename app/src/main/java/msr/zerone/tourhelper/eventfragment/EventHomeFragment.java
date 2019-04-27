@@ -12,10 +12,8 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.ContextMenu;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -23,16 +21,14 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.PopupWindow;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -44,7 +40,7 @@ import msr.zerone.tourhelper.eventfragment.model.EventModel;
 
 import static msr.zerone.tourhelper.THfirebase.eventReference;
 import static msr.zerone.tourhelper.THfirebase.fAuth;
-import static msr.zerone.tourhelper.THfirebase.fDatabase;
+import static msr.zerone.tourhelper.eventfragment.TourDateCollection.dateList;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -54,6 +50,8 @@ public class EventHomeFragment extends Fragment{
     private RecyclerView recyclerView;
     private FloatingActionButton floatingActionButton;
     private PopupWindow popupWindow;
+
+    TourDateCollection pickerAlert;
 
     public EventHomeFragment() {
         // Required empty public constructor
@@ -82,7 +80,7 @@ public class EventHomeFragment extends Fragment{
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-
+        pickerAlert = new TourDateCollection();
 
         final List<EventModel> eventModels = new ArrayList<>();
         eventReference.addChildEventListener(new ChildEventListener() {
@@ -96,6 +94,14 @@ public class EventHomeFragment extends Fragment{
                 EventRecyclerAdapter adapter = new EventRecyclerAdapter(context,eventModels);
                 adapter.notifyDataSetChanged();
                 recyclerView.setAdapter(adapter);
+
+                for(EventModel m:eventModels){
+                    try {
+                        TourDateCollection.dateRange(m.getDeparDate(),m.getReturnDate());
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
 
             }
 
@@ -129,7 +135,7 @@ public class EventHomeFragment extends Fragment{
         @Override
         public void onClick(View v) {
 
-            View popupView = getLayoutInflater().inflate(R.layout.add_event_layout, null);
+            final View popupView = getLayoutInflater().inflate(R.layout.add_event_layout, null);
 
             popupWindow = new PopupWindow(popupView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 
@@ -157,15 +163,36 @@ public class EventHomeFragment extends Fragment{
                     FirebaseUser user = fAuth.getCurrentUser();
                     String createdDate = new SimpleDateFormat("MMM dd, yyyy").format(new Date());
                     String id = eventReference.push().getKey();
-                    EventModel model = new EventModel(id,user.getUid(),eventName.getEditText().getText().toString(),
-                            startLocation.getEditText().getText().toString(),
-                            destination.getEditText().getText().toString(),
-                            createdDate,
-                            departureDate.getText().toString(),
-                            returnDate.getText().toString(),
-                            estimatedBudget.getEditText().getText().toString());
-                    eventReference.child(id).setValue(model);
-                    popupWindow.dismiss();
+                    String en = eventName.getEditText().getText().toString();
+                    String sl = startLocation.getEditText().getText().toString();
+                    String dst = destination.getEditText().getText().toString();
+                    String dtd = departureDate.getText().toString();
+                    String rtd = returnDate.getText().toString();
+                    String bdgt = estimatedBudget.getEditText().getText().toString();
+
+//                    boolean okay = false;
+                    if (!dateList.isEmpty()) {
+                        for (String s : dateList) {
+                            if (s.equals(dtd) || s.equals(rtd)) {
+                                Toast.makeText(popupView.getContext(), "Please change the date, these days you have tours", Toast.LENGTH_SHORT).show();
+                                break;
+//                            } else {
+//                                okay = true;
+                            }
+                        }
+                    }
+
+                    if (!en.isEmpty() && !sl.isEmpty() && !dst.isEmpty() && !dtd.isEmpty() && !rtd.isEmpty() && !bdgt.isEmpty()) {
+
+//                        if (okay) {
+                            EventModel model = new EventModel(id, user.getUid(), en, sl, dst, createdDate, dtd, rtd, bdgt);
+                            eventReference.child(id).setValue(model);
+                            popupWindow.dismiss();
+//                        }
+                    }else {
+                        Toast.makeText(popupView.getContext(), "Please fill up all field", Toast.LENGTH_SHORT).show();
+                    }
+
                 }
             });
 
@@ -180,6 +207,7 @@ public class EventHomeFragment extends Fragment{
                             new DatePickerDialog(getView().getContext(),
                                     listener, year, month, day);
                     datePickerDialog.show();
+
                 }
                 private DatePickerDialog.OnDateSetListener listener =
                         new DatePickerDialog.OnDateSetListener() {
@@ -191,7 +219,21 @@ public class EventHomeFragment extends Fragment{
                                 calendar.set(i, i1, i2);
 
                                 String dob = simpleDateFormat.format(calendar.getTime());
-                                departureDate.setText(dob);
+
+                                if (!dateList.isEmpty()) {
+                                    for (String s : dateList) {
+                                        if (s.equals(dob)) {
+                                            Toast.makeText(popupView.getContext(), "Please change the date, these days you have tours", Toast.LENGTH_LONG).show();
+                                            break;
+                                        }
+                                        departureDate.setText(dob);
+                                    }
+                                }
+
+                                if (dateList.isEmpty()){
+                                    departureDate.setText(dob);
+                                }
+
                             }
                         };
 
@@ -219,7 +261,22 @@ public class EventHomeFragment extends Fragment{
                                             calendar.set(i, i1, i2);
 
                                             String dob = simpleDateFormat.format(calendar.getTime());
-                                            returnDate.setText(dob);
+
+                                            if (!dateList.isEmpty()) {
+                                                for (String s : dateList) {
+                                                    if (s.equals(dob)) {
+                                                        Toast.makeText(popupView.getContext(), "Please change the date, these days you have tours", Toast.LENGTH_LONG).show();
+                                                        break;
+                                                    }
+                                                    returnDate.setText(dob);
+                                                }
+                                            }
+
+                                            if (dateList.isEmpty()){
+                                                returnDate.setText(dob);
+                                            }
+
+
                                         }
                                     };
 

@@ -73,6 +73,25 @@
                     android:singleLine="true"/>
             </android.support.design.widget.TextInputLayout>
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Profile Photo ..."
+                android:textSize="20sp"
+                android:visibility="gone"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:visibility="gone">
+                <Button
+                    android:id="@+id/pickFromGallery"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="pick from gallery"/>
+            </LinearLayout>
+
             <Button
                 android:id="@+id/registrationBtnId"
                 android:layout_width="match_parent"

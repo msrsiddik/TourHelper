@@ -14,6 +14,13 @@
     <item android:id="@+id/loginToolbarItem"
         android:title="Login"/>
 
+    <item android:id="@+id/uploadPhotos"
+        android:title="Backup Photos"/>
+
+    <item android:id="@+id/restorePhotos"
+        android:visible="false"
+        android:title="Restore Photos"/>
+
     <item android:id="@+id/logOutToolbarItem"
         android:title="Logout"/>
 
