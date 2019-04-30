@@ -9,30 +9,44 @@
     android:fitsSystemWindows="true"
     tools:context=".MainActivity">
 
-    <LinearLayout
+    <android.support.design.widget.CoordinatorLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="wrap_content">
 
-        <include layout="@layout/toolbar"/>
-
-        <FrameLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/fragmentContainer">
+            android:orientation="vertical">
 
-        </FrameLayout>
+            <include layout="@layout/toolbar"/>
 
-    </LinearLayout>
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="56dp"
+                android:id="@+id/fragmentContainer">
+
+            </FrameLayout>
+
+        </LinearLayout>
+
+            <android.support.design.widget.BottomNavigationView
+                android:id="@+id/navigationBottom"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:background="?android:attr/windowBackground"
+                app:menu="@menu/bottom_navigation_menu"/>
+
+    </android.support.design.widget.CoordinatorLayout>
 
     <android.support.design.widget.NavigationView
         android:id="@+id/nav_view"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
+        android:background="@color/cardViewBgC"
         app:headerLayout="@layout/navigation_header"
-        app:menu="@menu/navigation_menu">
-
-    </android.support.design.widget.NavigationView>
+        app:menu="@menu/navigation_menu" />
 
 </android.support.v4.widget.DrawerLayout>

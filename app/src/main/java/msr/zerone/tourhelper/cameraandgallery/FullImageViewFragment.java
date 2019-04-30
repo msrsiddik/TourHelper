@@ -12,11 +12,15 @@ import android.view.ViewGroup;
 
 import msr.zerone.tourhelper.R;
 
+import static msr.zerone.tourhelper.cameraandgallery.GalleryFragment.pos;
+
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FullImageViewFragment extends Fragment{
+public class FullImageViewFragment extends Fragment {
     private ViewPager viewPager;
+
+    private int position;
 
     public FullImageViewFragment() {
         // Required empty public constructor
@@ -40,6 +44,8 @@ public class FullImageViewFragment extends Fragment{
 
         FullImageViewAdapter adapter = new FullImageViewAdapter(getContext(),collection.matches());
         viewPager.setAdapter(adapter);
+        viewPager.setCurrentItem(pos);
+
     }
 
 }

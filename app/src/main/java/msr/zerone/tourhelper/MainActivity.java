@@ -3,11 +3,13 @@ package msr.zerone.tourhelper;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.FileProvider;
@@ -19,8 +21,11 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseUser;
+
+import org.w3c.dom.Text;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,12 +44,14 @@ import msr.zerone.tourhelper.userfragment.RegistrationFragment;
 import msr.zerone.tourhelper.weather.WeatherHomeFragment;
 
 import static msr.zerone.tourhelper.THfirebase.fAuth;
+import static msr.zerone.tourhelper.THfirebase.userReference;
 
 public class MainActivity extends AppCompatActivity implements FragmentInter, NavigationView.OnNavigationItemSelectedListener {
     private FragmentManager manager;
     private Toolbar mToolbar;
     private DrawerLayout mDrawerLayout;
     private NavigationView navigationView;
+    private BottomNavigationView navigation;
     static final int REQUEST_TAKE_PHOTO = 1;
     private static String currentPhotoPath;
 
@@ -94,6 +101,7 @@ public class MainActivity extends AppCompatActivity implements FragmentInter, Na
     private void setupToolbarMenu() {
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mToolbar.setTitle("Tour Helper");
+        mToolbar.setTitleTextColor(Color.WHITE);
         mToolbar.inflateMenu(R.menu.main_toolbar_menu);
 
         mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
@@ -108,6 +116,10 @@ public class MainActivity extends AppCompatActivity implements FragmentInter, Na
                         break;
                     case R.id.loginToolbarItem:
                         manager.beginTransaction().replace(R.id.fragmentContainer, new LoginFragment()).commit();
+                        break;
+                    case R.id.syncPhotos:
+                        ImageCollection collect = new ImageCollection();
+//                        collect.syncPhotos();
                         break;
                     case R.id.uploadPhotos:
                         ImageCollection collection = new ImageCollection();
@@ -127,11 +139,31 @@ public class MainActivity extends AppCompatActivity implements FragmentInter, Na
         navigationView = findViewById(R.id.nav_view);
         mDrawerLayout = findViewById(R.id.dl);
         navigationView.setNavigationItemSelectedListener(this);
-
+        navigationView.setItemIconTintList(null);
         ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string.open, R.string.close);
-
         mDrawerLayout.addDrawerListener(drawerToggle);
         drawerToggle.syncState();
+
+        navigation = findViewById(R.id.navigationBottom);
+        navigation.setBackgroundColor(Color.rgb(233,180,250));
+        navigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                switch (menuItem.getItemId()){
+                    case R.id.action_dashboard:
+                        if (user != null) {
+                            gotoDashboardFragment();
+                        }else {
+                            manager.beginTransaction().replace(R.id.fragmentContainer, new LoginFragment()).commit();
+                        }
+                        break;
+                    case R.id.action_nav:
+                        showDrawer();
+                        break;
+                }
+                return false;
+            }
+        });
 
         navAndToolbarItemHide();
 
@@ -304,7 +336,13 @@ public class MainActivity extends AppCompatActivity implements FragmentInter, Na
         fAuth.signOut();
         FragmentInter inter = MainActivity.this;
         inter.login(false);
-        manager.beginTransaction().replace(R.id.fragmentContainer, new LoginFragment()).commit();
+        File[] allPhotos = new ImageCollection().matches();
+        for (File f : allPhotos){
+            f.delete();
+        }
+        Intent refresh = new Intent(this, MainActivity.class);
+        startActivity(refresh);//Start the same Activity
+        finish();
     }
 
 

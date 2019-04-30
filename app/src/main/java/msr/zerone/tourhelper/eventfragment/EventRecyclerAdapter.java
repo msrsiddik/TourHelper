@@ -79,8 +79,7 @@ public class EventRecyclerAdapter extends RecyclerView.Adapter<EventRecyclerAdap
         final EventModel model = eventModelList.get(i);
 
         eventHolder.eventName.setText(model.getName());
-        eventHolder.eventDate.setText(model.getDeparDate());
-        eventHolder.returnDateView.setText(model.getReturnDate());
+        eventHolder.eventDate.setText(model.getDeparDate()+"  <=>  "+model.getReturnDate());
 
         eventHolder.eventItemBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -465,13 +464,12 @@ public class EventRecyclerAdapter extends RecyclerView.Adapter<EventRecyclerAdap
     }
 
     class EventHolder extends RecyclerView.ViewHolder {
-        TextView eventName, eventDate, returnDateView, option;
+        TextView eventName, eventDate, option;
         CardView eventItemBtn;
         public EventHolder(@NonNull View itemView) {
             super(itemView);
             eventName = itemView.findViewById(R.id.eventNameView);
             eventDate = itemView.findViewById(R.id.eventDateView);
-            returnDateView = itemView.findViewById(R.id.returnDateView);
             option = itemView.findViewById(R.id.option);
             eventItemBtn = itemView.findViewById(R.id.eventItemBtn);
         }

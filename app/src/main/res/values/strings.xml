@@ -10,7 +10,8 @@
     <string name="weather_api_key_4">d0b941339d6f075686460c7fe0912041</string>
     <string name="weather_api_key_5">0d383ae00da294a620afc0559c64365c</string>
 
-    <string name="nearby_place_api_key">AIzaSyBxIa_N-bqyH6P687uXWEwz2FW2JJaYD1I</string>
+    <!--<string name="nearby_place_api_key">AIzaSyBxIa_N-bqyH6P687uXWEwz2FW2JJaYD1I</string>-->
+    <string name="nearby_place_api_key">AIzaSyAzmk9CXOJuiXIYWPjw8Xjc5BCHogm773w</string>
 
     <string name="degree_mark">\u00B0</string>
     <string name="celsius">&#8451;</string>

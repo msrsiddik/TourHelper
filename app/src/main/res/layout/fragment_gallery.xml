@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:id="@+id/refreshGallery"
+    android:background="@drawable/bacground_color"
     tools:context=".cameraandgallery.GalleryFragment">
 
     <LinearLayout

@@ -14,6 +14,9 @@
     <item android:id="@+id/loginToolbarItem"
         android:title="Login"/>
 
+    <item android:id="@+id/syncPhotos"
+        android:title="Sync Photos"/>
+
     <item android:id="@+id/uploadPhotos"
         android:title="Backup Photos"/>
 

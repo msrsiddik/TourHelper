@@ -3,12 +3,31 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/bacground_color"
     tools:context=".eventfragment.EventHomeFragment">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recyclerEventView"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="My Tour List"
+            android:textSize="25sp"
+            android:textStyle="bold"
+            android:textColor="#fff"
+            android:gravity="center_horizontal"
+            android:layout_marginTop="10dp"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerEventView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </LinearLayout>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fabAddEvent"
@@ -16,6 +35,9 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
-        android:layout_margin="20dp"/>
+        android:layout_margin="20dp"
+        android:src="@drawable/ic_add_black_24dp"
+        app:maxImageSize="50dp"
+        app:elevation="10dp"/>
 
 </RelativeLayout>

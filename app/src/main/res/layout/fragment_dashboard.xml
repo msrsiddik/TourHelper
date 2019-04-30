@@ -3,14 +3,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:weightSum="5"
+    android:weightSum="7"
+    android:background="@drawable/bacground_color"
     tools:context=".userfragment.DashboardFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="3"
+        android:layout_weight="4"
         android:orientation="vertical">
 
         <RelativeLayout
@@ -31,7 +33,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="2"
+        android:layout_weight="3"
         android:orientation="vertical">
 
         <LinearLayout
@@ -46,6 +48,8 @@
                 android:layout_weight="1"
                 android:layout_height="match_parent"
                 android:layout_margin="10dp"
+                app:cardCornerRadius="5dp"
+                app:cardBackgroundColor="@color/cardViewBgC"
                 android:foreground="?android:attr/selectableItemBackground"
                 android:clickable="true">
 
@@ -56,15 +60,15 @@
                     android:gravity="center">
 
                     <ImageView
-                        android:layout_width="70dp"
-                        android:layout_height="70dp"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
                         android:src="@drawable/weather_icon"/>
 
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="2dp"
                         android:background="#2196F3"
-                        android:layout_margin="10dp"
+                        android:layout_margin="7dp"
                         android:padding="10dp"/>
 
                     <TextView
@@ -83,6 +87,8 @@
                 android:layout_weight="1"
                 android:layout_height="match_parent"
                 android:layout_margin="10dp"
+                app:cardCornerRadius="5dp"
+                app:cardBackgroundColor="@color/cardViewBgC"
                 android:foreground="?android:attr/selectableItemBackground"
                 android:clickable="true">
 
@@ -93,15 +99,15 @@
                     android:gravity="center">
 
                     <ImageView
-                        android:layout_width="70dp"
-                        android:layout_height="70dp"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
                         android:src="@drawable/gallery_ic"/>
 
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="2dp"
                         android:background="#2196F3"
-                        android:layout_margin="10dp"
+                        android:layout_margin="7dp"
                         android:padding="10dp"/>
 
                     <TextView
@@ -128,6 +134,8 @@
                 android:layout_weight="1"
                 android:layout_height="match_parent"
                 android:layout_margin="10dp"
+                app:cardCornerRadius="5dp"
+                app:cardBackgroundColor="@color/cardViewBgC"
                 android:foreground="?android:attr/selectableItemBackground"
                 android:clickable="true">
 
@@ -138,21 +146,21 @@
                     android:gravity="center">
 
                     <ImageView
-                        android:layout_width="70dp"
-                        android:layout_height="70dp"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
                         android:src="@drawable/event_ic"/>
 
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="2dp"
                         android:background="#2196F3"
-                        android:layout_margin="10dp"
+                        android:layout_margin="7dp"
                         android:padding="10dp"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Event"
+                        android:text="Tour Event"
                         android:textSize="20sp"
                         android:textStyle="bold"/>
                 </LinearLayout>
@@ -165,6 +173,8 @@
                 android:layout_weight="1"
                 android:layout_height="match_parent"
                 android:layout_margin="10dp"
+                app:cardCornerRadius="5dp"
+                app:cardBackgroundColor="@color/cardViewBgC"
                 android:foreground="?android:attr/selectableItemBackground"
                 android:clickable="true">
 
@@ -175,15 +185,15 @@
                     android:gravity="center">
 
                     <ImageView
-                        android:layout_width="70dp"
-                        android:layout_height="70dp"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
                         android:src="@drawable/map_ic"/>
 
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="2dp"
                         android:background="#2196F3"
-                        android:layout_margin="10dp"
+                        android:layout_margin="7dp"
                         android:padding="10dp"/>
 
                     <TextView

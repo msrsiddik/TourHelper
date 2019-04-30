@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/bacground_color"
     tools:context=".weather.ForecastWeatherFragment">
 
     <LinearLayout
@@ -17,56 +19,95 @@
             android:textSize="25sp"
             android:text="Forecast"/>
 
-        <TextView
-            android:id="@+id/date1"
-            android:layout_width="wrap_content"
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
-            android:layout_gravity="center_horizontal"/>
+            app:cardBackgroundColor="@color/cardViewBgC">
+                <TextView
+                    android:id="@+id/date1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="20sp"
+                    android:textScaleX="2"
+                    android:gravity="center_horizontal"
+                    android:textStyle="bold"
+                    android:layout_gravity="center_horizontal"/>
+        </android.support.v7.widget.CardView>
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerViewInForecastId1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
-        <TextView
-            android:id="@+id/date2"
-            android:layout_width="wrap_content"
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
-            android:layout_gravity="center_horizontal"/>
+            app:cardBackgroundColor="@color/cardViewBgC">
+            <TextView
+                android:id="@+id/date2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:textScaleX="2"
+                android:gravity="center_horizontal"
+                android:textStyle="bold"
+                android:layout_gravity="center_horizontal"/>
+        </android.support.v7.widget.CardView>
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerViewInForecastId2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
-        <TextView
-            android:id="@+id/date3"
-            android:layout_width="wrap_content"
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
-            android:layout_gravity="center_horizontal"/>
+            app:cardBackgroundColor="@color/cardViewBgC">
+            <TextView
+                android:id="@+id/date3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:textScaleX="2"
+                android:gravity="center_horizontal"
+                android:textStyle="bold"
+                android:layout_gravity="center_horizontal"/>
+        </android.support.v7.widget.CardView>
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerViewInForecastId3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
-        <TextView
-            android:id="@+id/date4"
-            android:layout_width="wrap_content"
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
-            android:layout_gravity="center_horizontal"/>
+            app:cardBackgroundColor="@color/cardViewBgC">
+            <TextView
+                android:id="@+id/date4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:textScaleX="2"
+                android:gravity="center_horizontal"
+                android:textStyle="bold"
+                android:layout_gravity="center_horizontal"/>
+        </android.support.v7.widget.CardView>
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerViewInForecastId4"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
-        <TextView
-            android:id="@+id/date5"
-            android:layout_width="wrap_content"
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
-            android:layout_gravity="center_horizontal"/>
+            app:cardBackgroundColor="@color/cardViewBgC">
+            <TextView
+                android:id="@+id/date5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:textScaleX="2"
+                android:gravity="center_horizontal"
+                android:textStyle="bold"/>
+        </android.support.v7.widget.CardView>
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerViewInForecastId5"
             android:layout_width="match_parent"

@@ -16,6 +16,7 @@ public class THfirebase {
     public static DatabaseReference eventReference = fDatabase.getReference("Event");
     public static DatabaseReference budgetReference = fDatabase.getReference("Budget");
     public static DatabaseReference costReference = fDatabase.getReference("Cost");
+    public static DatabaseReference allPhotosReference = fDatabase.getReference("PhotoRef");
 
     public static FirebaseStorage fStorage = FirebaseStorage.getInstance();
     public static StorageReference photoReference = fStorage.getReference("Photos");

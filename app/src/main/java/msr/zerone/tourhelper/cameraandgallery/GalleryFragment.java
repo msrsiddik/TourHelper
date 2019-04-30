@@ -24,7 +24,7 @@ import msr.zerone.tourhelper.R;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class GalleryFragment extends Fragment {
+public class GalleryFragment extends Fragment{
     private ImageView emptyImage;
     private GridView photo_gridview;
     private SwipeRefreshLayout refreshGallery;
@@ -32,6 +32,8 @@ public class GalleryFragment extends Fragment {
     private ImageCollection collection;
     private File[] photos;
     private File deleteItem;
+
+    public static int pos;
 
     public GalleryFragment() {
         // Required empty public constructor
@@ -69,6 +71,8 @@ public class GalleryFragment extends Fragment {
         photo_gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent,
                                     View v, int position, long id) {
+                pos = position;
+
                 FragmentInter inter = (FragmentInter) getActivity();
                 inter.gotoFullImageViewFragment();
             }
@@ -126,7 +130,5 @@ public class GalleryFragment extends Fragment {
             photo_gridview.setAdapter(adapter);
         }
     }
-
-
 
 }

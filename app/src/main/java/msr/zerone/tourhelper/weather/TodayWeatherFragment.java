@@ -121,7 +121,7 @@ public class TodayWeatherFragment extends Fragment implements LocationFindInterf
                     temperature.setText(""+today.getMain().getTemp());
                     main_status.setText(today.getWeather().get(0).getMain());
                     update_time.setText("Updated as of "+new SimpleDateFormat("h:mm a").format(new Date(today.getDt()*1000)));
-                    wind_deg.setText("Feels like "+today.getWind().getDeg());
+                    wind_deg.setText("Feels like "+today.getMain().getTempMax());
                     wind_speed.setText("Wind "+today.getWind().getSpeed());
                     visibility.setText("Visibility "+(today.getVisibility()/1000)+"km");
                     pressure.setText("Barometer "+today.getMain().getPressure()+"mb");

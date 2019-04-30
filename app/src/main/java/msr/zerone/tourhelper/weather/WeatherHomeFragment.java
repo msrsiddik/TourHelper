@@ -6,6 +6,7 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
@@ -90,6 +91,7 @@ public class WeatherHomeFragment extends Fragment {
 
         setHasOptionsMenu(true);
         toolbar.setTitle("Weather");
+        toolbar.setTitleTextColor(Color.WHITE);
         toolbar.inflateMenu(R.menu.weather_toolbar_menu);
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
