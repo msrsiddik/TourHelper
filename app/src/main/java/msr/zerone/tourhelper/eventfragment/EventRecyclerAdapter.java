@@ -47,7 +47,6 @@ import msr.zerone.tourhelper.calculation.SumCalculator;
 import msr.zerone.tourhelper.eventfragment.model.Budget;
 import msr.zerone.tourhelper.eventfragment.model.Cost;
 import msr.zerone.tourhelper.eventfragment.model.EventModel;
-import msr.zerone.tourhelper.userfragment.DashboardFragment;
 import msr.zerone.tourhelper.userfragment.UserPreference;
 
 import static msr.zerone.tourhelper.THfirebase.budgetReference;
@@ -123,8 +122,10 @@ public class EventRecyclerAdapter extends RecyclerView.Adapter<EventRecyclerAdap
                         Budget budget = dataSnapshot.getValue(Budget.class);
                         budgets.add(budget);
 
-                        double sum = calculator.getBudgetSum(budgets) + Double.parseDouble(String.valueOf(budgetV.getText()));
+                        double oBudget = Double.parseDouble(String.valueOf(budgetV.getText()));
+                        double sum = calculator.getBudgetSum(budgets) + oBudget;
                         budgetV.setText(""+sum);
+
                     }
 
                     @Override
@@ -161,6 +162,7 @@ public class EventRecyclerAdapter extends RecyclerView.Adapter<EventRecyclerAdap
 
                         double sum = calculator.getCostSum(costList);
                         totalCostV.setText("Total Cost : "+sum);
+
                     }
 
                     @Override
@@ -270,6 +272,9 @@ public class EventRecyclerAdapter extends RecyclerView.Adapter<EventRecyclerAdap
                         dialog.show();
                     }
                 });
+
+//                int budgetT = Integer.valueOf(budgetV.getText().toString());
+//                int costT = (int) calculator.getCostSum(costList);
 
 
                 int location[] = new int[2];

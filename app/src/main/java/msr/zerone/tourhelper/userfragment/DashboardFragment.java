@@ -3,16 +3,22 @@ package msr.zerone.tourhelper.userfragment;
 
 import android.app.Activity;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.PieData;
@@ -24,7 +30,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,21 +37,28 @@ import java.util.List;
 import msr.zerone.tourhelper.FragmentInter;
 import msr.zerone.tourhelper.R;
 import msr.zerone.tourhelper.calculation.SumCalculator;
+import msr.zerone.tourhelper.eventfragment.model.Budget;
 import msr.zerone.tourhelper.eventfragment.model.Cost;
 import msr.zerone.tourhelper.eventfragment.model.EventModel;
 
+import static msr.zerone.tourhelper.THfirebase.budgetReference;
 import static msr.zerone.tourhelper.THfirebase.costReference;
+import static msr.zerone.tourhelper.THfirebase.eventReference;
 import static msr.zerone.tourhelper.THfirebase.fAuth;
-import static msr.zerone.tourhelper.THfirebase.userReference;
+import static msr.zerone.tourhelper.THfirebase.photoReference;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class DashboardFragment extends Fragment{
+public class DashboardFragment extends Fragment {
     private CardView weatherDashItem, galleryDashItem, eventDashItem, mapDashItem;
     private PieChart pieChart;
+    private ProgressBar progressBarTD;
+    private SwipeRefreshLayout refreshDash;
+    private TextView tourNameV, barTxt;
 
     private UserPreference preference;
+    private BudgetAndCostPref budgetAndCostPref;
     private FirebaseUser user;
     private SumCalculator calculator;
 
@@ -71,10 +83,20 @@ public class DashboardFragment extends Fragment{
         eventDashItem = view.findViewById(R.id.eventDashItem);
         mapDashItem = view.findViewById(R.id.mapDashItem);
         pieChart = view.findViewById(R.id.pieChart);
+        progressBarTD = view.findViewById(R.id.progressBarTD);
+        refreshDash = view.findViewById(R.id.refreshDash);
+        tourNameV = view.findViewById(R.id.tourNameV);
+        barTxt = view.findViewById(R.id.barTxt);
 
         preference = new UserPreference(getContext());
+        budgetAndCostPref = new BudgetAndCostPref(getContext());
         user = fAuth.getCurrentUser();
         calculator = new SumCalculator();
+
+        pieChart.setEntryLabelColor(Color.BLACK);
+        pieChart.setEntryLabelTextSize(14f);
+
+        pieChart.setCenterText("Cost");
 
         InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Activity.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
@@ -111,16 +133,33 @@ public class DashboardFragment extends Fragment{
             }
         });
 
+        tourNameV.setText(budgetAndCostPref.getEventName());
         dataCollect();
+        totalBudget();
 
-//        Log.e("DataCollect", "onViewCreated: "+costList.size());
+        setUpPieChart(0,0,0,0,0,0);
+
+        refreshDash.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                dataCollect();
+                totalBudget();
+                tourNameV.setText(budgetAndCostPref.getEventName());
+                refreshDash.setRefreshing(false);
+            }
+        });
+
+        pieChart.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Toast.makeText(getContext(), "Worked", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        });
 
     }
 
     void setUpPieChart(float road, float meal, float medical, float shopping, float tickets, float hotel){
-
-        pieChart.setEntryLabelColor(Color.BLACK);
-        pieChart.setEntryLabelTextSize(18f);
 
         float[] cost = {road,meal,medical,shopping,tickets, hotel};
         String[] costTitle = {"Road", "Meal", "Medical", "Shopping", "Tickets", "Hotel"};
@@ -142,7 +181,7 @@ public class DashboardFragment extends Fragment{
         dataSet.setSliceSpace(3f);
         dataSet.setIconsOffset(new MPPointF(0, 40));
         dataSet.setSelectionShift(5f);
-        dataSet.setValueTextSize(18f);
+        dataSet.setValueTextSize(14f);
 
         ArrayList<Integer> colors = new ArrayList<>();
         for (int c : ColorTemplate.VORDIPLOM_COLORS)
@@ -161,8 +200,6 @@ public class DashboardFragment extends Fragment{
         dataSet.setColors(colors);
 
         PieData data = new PieData(dataSet);
-
-        pieChart.setCenterText("Cost");
 
         pieChart.setData(data);
     }
@@ -205,6 +242,12 @@ public class DashboardFragment extends Fragment{
                 float hotel = (float) calculator.getCostSum(hotellist);
 
                 setUpPieChart(road, meal, medical, shopping, tickets, hotel);
+
+                int totalBudget = (budgetAndCostPref.getBudget()+budgetAndCostPref.getNewBudget());
+                int totalCost = (int) (road+meal+medical+shopping+tickets+hotel);
+                progressBarTD.setMax(totalBudget);
+                progressBarTD.setProgress(totalCost);
+
             }
 
             @Override
@@ -230,4 +273,73 @@ public class DashboardFragment extends Fragment{
 
     }
 
+    void totalBudget(){
+        final SumCalculator calculator = new SumCalculator();
+
+        final List<Budget> budgets = new ArrayList<>();
+        budgetReference.child(preference.getHomeuId()).child(preference.getHomeEventId()).addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                Budget budget = dataSnapshot.getValue(Budget.class);
+                budgets.add(budget);
+
+                double sum = calculator.getBudgetSum(budgets);
+                budgetAndCostPref.setNewBudget((int) sum);
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+//        final List<Integer> eventBudget = new ArrayList<>();
+        eventReference.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                EventModel eventModel = dataSnapshot.getValue(EventModel.class);
+                if (preference.getHomeEventId().equals(eventModel.getEventId())) {
+//                    eventBudget.add(Integer.valueOf(eventModel.getBudget()));
+                    budgetAndCostPref.setBudget(Integer.parseInt(eventModel.getBudget()));
+                    budgetAndCostPref.setEventName(eventModel.getName());
+                }
+
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
 }

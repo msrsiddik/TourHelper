@@ -1,6 +1,7 @@
 package msr.zerone.tourhelper;
 
 import android.content.BroadcastReceiver;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
@@ -16,6 +17,7 @@ import android.support.v4.content.FileProvider;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -240,9 +242,31 @@ public class MainActivity extends AppCompatActivity implements FragmentInter, Na
         if (mDrawerLayout.isDrawerOpen(GravityCompat.START)){
             closeDrawer();
         }
-        else {
-            super.onBackPressed();
+        else if (manager.getBackStackEntryCount()>0){
+            int fragments = manager.getBackStackEntryCount();
+            if (fragments == 1) {
+                manager.popBackStack();
+            } else if (manager.getBackStackEntryCount() > 1) {
+                manager.popBackStack();
+            }
+        }else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setIcon(R.drawable.tour_helper);
+            builder.setTitle("Tour Helper");
+            builder.setMessage("Do you want to close this app?");
+            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    MainActivity.super.onBackPressed();
+                }
+            });
+            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                }
+            });
+            builder.show();
+
         }
+
     }
 
 //    @Override
@@ -358,22 +382,22 @@ public class MainActivity extends AppCompatActivity implements FragmentInter, Na
 
     @Override
     public void gotoWeatherFragment() {
-        manager.beginTransaction().replace(R.id.fragmentContainer, new WeatherHomeFragment()).commit();
+        manager.beginTransaction().addToBackStack(null).replace(R.id.fragmentContainer, new WeatherHomeFragment()).commit();
     }
 
     @Override
     public void gotoGalleryFragment() {
-        manager.beginTransaction().replace(R.id.fragmentContainer, new GalleryFragment()).commit();
+        manager.beginTransaction().addToBackStack(null).replace(R.id.fragmentContainer, new GalleryFragment()).commit();
     }
 
     @Override
     public void gotoEventFragment() {
-        manager.beginTransaction().replace(R.id.fragmentContainer, new EventHomeFragment()).commit();
+        manager.beginTransaction().addToBackStack(null).replace(R.id.fragmentContainer, new EventHomeFragment()).commit();
     }
 
     @Override
     public void gotoMapFragment() {
-        manager.beginTransaction().replace(R.id.fragmentContainer, new MapFragment()).commit();
+        manager.beginTransaction().addToBackStack(null).replace(R.id.fragmentContainer, new MapFragment()).commit();
     }
 
     @Override

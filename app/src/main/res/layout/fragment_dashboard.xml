@@ -9,26 +9,63 @@
     android:background="@drawable/bacground_color"
     tools:context=".userfragment.DashboardFragment">
 
-    <LinearLayout
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/refreshDash"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="4"
-        android:orientation="vertical">
-
-        <RelativeLayout
+        android:layout_weight="4">
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="0dp"
+            android:orientation="vertical">
 
-            <com.github.mikephil.charting.charts.PieChart
-                android:id="@+id/pieChart"
-                android:layout_width="300dp"
-                android:layout_height="300dp"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentBottom="true" />
+            <TextView
+                android:id="@+id/tourNameV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:textSize="20sp"
+                android:layout_margin="10dp"
+                android:textStyle="bold"
+                android:textColor="#fff"/>
 
-        </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <ProgressBar
+                    android:id="@+id/progressBarTD"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                    android:minHeight="35dp"
+                    android:scaleY="4"
+                    android:progressTint="#343"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginLeft="10dp"/>
+                <TextView
+                    android:id="@+id/barTxt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:textColor="#fff"/>
+            </RelativeLayout>
 
-    </LinearLayout> <!-- Empty Field -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                    <com.github.mikephil.charting.charts.PieChart
+                        android:id="@+id/pieChart"
+                        android:layout_width="300dp"
+                        android:layout_height="300dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentBottom="true"
+                        android:longClickable="true"/>
+
+            </RelativeLayout>
+
+        </LinearLayout> <!-- Empty Field -->
+    </android.support.v4.widget.SwipeRefreshLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
