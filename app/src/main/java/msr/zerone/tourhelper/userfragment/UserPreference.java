@@ -24,11 +24,11 @@ public class UserPreference {
     public void setHomeEventId(String stutus){
             editor.putString("eventid", stutus);
             editor.commit();
-        }
+    }
 
-        public String getHomeEventId(){
-            return sharedPreferences.getString("eventid","default");
-        }
+    public String getHomeEventId(){
+        return sharedPreferences.getString("eventid","default");
+    }
 
     public void clear(){
         editor.clear();

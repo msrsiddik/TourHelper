@@ -37,6 +37,7 @@ import java.util.List;
 
 import msr.zerone.tourhelper.R;
 import msr.zerone.tourhelper.eventfragment.model.EventModel;
+import msr.zerone.tourhelper.networkinfo.NetworkUtil;
 
 import static msr.zerone.tourhelper.THfirebase.eventReference;
 import static msr.zerone.tourhelper.THfirebase.fAuth;
@@ -67,6 +68,8 @@ public class EventHomeFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        NetworkUtil.isOffline(context, container);
+
         return inflater.inflate(R.layout.fragment_event_home, container, false);
     }
 

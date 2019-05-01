@@ -1,12 +1,15 @@
 package msr.zerone.tourhelper.userfragment;
 
 
+import android.Manifest;
 import android.app.Activity;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.CardView;
@@ -61,6 +64,8 @@ public class DashboardFragment extends Fragment {
     private BudgetAndCostPref budgetAndCostPref;
     private FirebaseUser user;
     private SumCalculator calculator;
+
+    private boolean isLocationPermissionGranted=false;
 
     public DashboardFragment() {
         // Required empty public constructor
@@ -341,5 +346,31 @@ public class DashboardFragment extends Fragment {
 
             }
         });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        checkLocationPermission();
+    }
+
+    public void checkLocationPermission() {
+        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(getActivity(),
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    111);
+        } else {
+            isLocationPermissionGranted = true;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == 111) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                isLocationPermissionGranted = true;
+            }
+        }
     }
 }

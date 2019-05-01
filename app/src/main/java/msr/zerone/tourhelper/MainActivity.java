@@ -23,7 +23,9 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseUser;
 
@@ -40,6 +42,7 @@ import msr.zerone.tourhelper.cameraandgallery.ImageCollection;
 import msr.zerone.tourhelper.eventfragment.EventHomeFragment;
 import msr.zerone.tourhelper.map.MapFragment;
 import msr.zerone.tourhelper.networkinfo.MyReceiver;
+import msr.zerone.tourhelper.networkinfo.NetworkUtil;
 import msr.zerone.tourhelper.userfragment.DashboardFragment;
 import msr.zerone.tourhelper.userfragment.LoginFragment;
 import msr.zerone.tourhelper.userfragment.RegistrationFragment;
@@ -119,11 +122,18 @@ public class MainActivity extends AppCompatActivity implements FragmentInter, Na
                     case R.id.loginToolbarItem:
                         manager.beginTransaction().replace(R.id.fragmentContainer, new LoginFragment()).commit();
                         break;
-                    case R.id.syncPhotos:
+                    case R.id.syncPhotos:\
                         ImageCollection collect = new ImageCollection();
-//                        collect.syncPhotos();
+                        collect.syncPhoto(MainActivity.this);
                         break;
                     case R.id.uploadPhotos:
+                        NetworkUtil.isOffline(MainActivity.this, new ViewGroup(MainActivity.this) {
+                            @Override
+                            protected void onLayout(boolean changed, int l, int t, int r, int b) {
+
+                            }
+                        });
+
                         ImageCollection collection = new ImageCollection();
                         collection.uploadPhoto(MainActivity.this);
                         break;
@@ -422,6 +432,7 @@ public class MainActivity extends AppCompatActivity implements FragmentInter, Na
             toolbar_menu.findItem(R.id.loginToolbarItem).setVisible(false);
             toolbar_menu.findItem(R.id.logOutToolbarItem).setVisible(true);
             toolbar_menu.findItem(R.id.uploadPhotos).setVisible(true);
+            toolbar_menu.findItem(R.id.syncPhotos).setVisible(true);
 
         }else {
             nav_menu.findItem(R.id.login).setVisible(true);
@@ -450,4 +461,5 @@ public class MainActivity extends AppCompatActivity implements FragmentInter, Na
                 break;
         }
     }
+
 }

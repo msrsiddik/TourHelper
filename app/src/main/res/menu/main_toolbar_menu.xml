@@ -15,6 +15,7 @@
         android:title="Login"/>
 
     <item android:id="@+id/syncPhotos"
+        android:visible="false"
         android:title="Sync Photos"/>
 
     <item android:id="@+id/uploadPhotos"

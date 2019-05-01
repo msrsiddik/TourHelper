@@ -31,6 +31,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import msr.zerone.tourhelper.R;
+import msr.zerone.tourhelper.networkinfo.NetworkUtil;
 
 
 /**
@@ -70,7 +71,7 @@ public class WeatherHomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-
+        NetworkUtil.isOffline(context, container);
         return inflater.inflate(R.layout.fragment_weather_home, container, false);
     }
 
@@ -234,5 +235,4 @@ public class WeatherHomeFragment extends Fragment {
             return noOfTabPage;
         }
     }
-
 }

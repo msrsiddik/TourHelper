@@ -40,6 +40,7 @@ import java.util.List;
 import msr.zerone.tourhelper.R;
 import msr.zerone.tourhelper.map.nearby.NearbyResponse;
 import msr.zerone.tourhelper.map.nearby.Result;
+import msr.zerone.tourhelper.networkinfo.NetworkUtil;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -81,6 +82,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        NetworkUtil.isOffline(context, container);
+
         return inflater.inflate(R.layout.fragment_map, container, false);
     }
 

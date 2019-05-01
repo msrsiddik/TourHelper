@@ -22,6 +22,7 @@ import com.google.firebase.auth.AuthResult;
 
 import msr.zerone.tourhelper.FragmentInter;
 import msr.zerone.tourhelper.R;
+import msr.zerone.tourhelper.networkinfo.NetworkUtil;
 
 import static msr.zerone.tourhelper.THfirebase.fAuth;
 
@@ -41,6 +42,8 @@ public class LoginFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        NetworkUtil.isOffline(getContext(), container);
+
         return inflater.inflate(R.layout.fragment_login, container, false);
     }
 

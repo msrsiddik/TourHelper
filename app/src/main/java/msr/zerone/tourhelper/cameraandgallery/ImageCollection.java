@@ -1,39 +1,38 @@
 package msr.zerone.tourhelper.cameraandgallery;
 
+import android.app.DownloadManager;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FilenameFilter;
+import java.util.ArrayList;
+import java.util.List;
 
-import static com.google.firebase.auth.FirebaseAuth.getInstance;
 import static msr.zerone.tourhelper.THfirebase.allPhotosReference;
 import static msr.zerone.tourhelper.THfirebase.fAuth;
-import static msr.zerone.tourhelper.THfirebase.fDatabase;
-import static msr.zerone.tourhelper.THfirebase.fUser;
 import static msr.zerone.tourhelper.THfirebase.photoReference;
 
 public class ImageCollection {
 
     private File f = null;
-    private boolean shouldRun = true;
 
     public ImageCollection() {
     }
@@ -74,32 +73,37 @@ public class ImageCollection {
             uploadTask.addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(context, "Failed", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Upload Failed", Toast.LENGTH_SHORT).show();
                 }
             }).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                    Toast.makeText(context, "Complete", Toast.LENGTH_SHORT).show();
-//                    savePhotoRef(uri.getLastPathSegment());
+                    savePhotoRef(fAuth.getUid(), uri.getLastPathSegment().replace(".jpg",""));
+                    Toast.makeText(context, "Upload Complete", Toast.LENGTH_SHORT).show();
+//                    uri.getLastPathSegment().replace(".jpg","");
                 }
             });
         }
     }
 
-    private void savePhotoRef(String photoName){
-        String uid = fAuth.getCurrentUser().getUid();
-        String id = allPhotosReference.push().getKey();
-        PhotoRefModel refModel = new PhotoRefModel(id, photoName);
+    public void savePhotoRef(String uid, String photoName){
+        String id = photoName;
+        PhotoRefModel refModel = new PhotoRefModel(photoName);
         allPhotosReference.child(uid).child(id).setValue(refModel);
     }
 
     public void deletePhoto(File file, final Context context){
-        Uri uri = Uri.fromFile(file);
+        final Uri uri = Uri.fromFile(file);
         StorageReference desertRef = photoReference.child(fAuth.getUid() +"/" + uri.getLastPathSegment());
         desertRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
+
+                String photoName = uri.getLastPathSegment().replace(".jpg","");
+                allPhotosReference.child(fAuth.getUid()).child(photoName).removeValue();
+
                 Toast.makeText(context, "Delete Success", Toast.LENGTH_SHORT).show();
+
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -109,57 +113,57 @@ public class ImageCollection {
         });
     }
 
-    public void syncPhotos(){
+    public void syncPhoto(final Context context){
+        final List<PhotoRefModel> photoRefModelList = new ArrayList<>();
+        allPhotosReference.child(fAuth.getUid()).addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                PhotoRefModel photoRefModel = dataSnapshot.getValue(PhotoRefModel.class);
+                photoRefModelList.add(photoRefModel);
 
-//        Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-//            @Override
-//            public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-//                if (!task.isSuccessful()) {
-//                    throw task.getException();
-//                }
-//
-//                // Continue with the task to get the download URL
-//                return ref.getDownloadUrl();
-//            }
-//        }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-//            @Override
-//            public void onComplete(@NonNull Task<Uri> task) {
-//                if (task.isSuccessful()) {
-//                    Uri downloadUri = task.getResult();
-//                } else {
-//                    // Handle failures
-//                    // ...
-//                }
-//            }
-//        });
+                final String photoName = photoRefModel.getPhotoName();
+
+                photoReference.child(fAuth.getUid()).child(photoName+".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        downloadPhoto(context, photoName, ".jpg",
+                                "/Pictures", uri.toString());
+                    }
+                });
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void downloadPhoto(Context context, String photoName, String photoExtension, String photoSaveDirectory, String url){
+        DownloadManager downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+
+        Uri uri = Uri.parse(url);
+        DownloadManager.Request request = new DownloadManager.Request(uri);
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+        request.setDestinationInExternalFilesDir(context, photoSaveDirectory, photoName+photoExtension);
+
+        downloadManager.enqueue(request);
 
     }
 
-    class PhotoRefModel{
-        private String id, photoName;
-
-        public PhotoRefModel() {
-        }
-
-        public PhotoRefModel(String id, String photoName) {
-            this.id = id;
-            this.photoName = photoName;
-        }
-
-        public String getId() {
-            return id;
-        }
-
-        public void setUid(String id) {
-            this.id = id;
-        }
-
-        public String getPhotoName() {
-            return photoName;
-        }
-
-        public void setPhotoName(String photoName) {
-            this.photoName = photoName;
-        }
-    }
 }

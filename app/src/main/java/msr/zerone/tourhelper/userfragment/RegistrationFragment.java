@@ -27,6 +27,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import msr.zerone.tourhelper.FragmentInter;
 import msr.zerone.tourhelper.R;
+import msr.zerone.tourhelper.networkinfo.NetworkUtil;
 import msr.zerone.tourhelper.userfragment.model.RegistrationModel;
 
 import static android.support.constraint.Constraints.TAG;
@@ -60,6 +61,8 @@ public class RegistrationFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        NetworkUtil.isOffline(context, container);
+
         return inflater.inflate(R.layout.fragment_registration, container, false);
     }
 
