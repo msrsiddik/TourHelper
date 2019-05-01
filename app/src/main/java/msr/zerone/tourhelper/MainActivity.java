@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements FragmentInter, Na
                     case R.id.loginToolbarItem:
                         manager.beginTransaction().replace(R.id.fragmentContainer, new LoginFragment()).commit();
                         break;
-                    case R.id.syncPhotos:\
+                    case R.id.syncPhotos:
                         ImageCollection collect = new ImageCollection();
                         collect.syncPhoto(MainActivity.this);
                         break;
@@ -279,50 +279,12 @@ public class MainActivity extends AppCompatActivity implements FragmentInter, Na
 
     }
 
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        MenuInflater inflater = getMenuInflater();
-//        inflater.inflate(R.menu.main_toolbar_menu, menu);
-//        return true;
-//    }
-
 
     @Override
     protected void onStart() {
         super.onStart();
         user = fAuth.getCurrentUser();
     }
-
-
-
-//    @Override
-//    public boolean onPrepareOptionsMenu(Menu menu) {
-//        MenuItem loginItem = menu.findItem(R.id.loginToolbarItem);
-//        MenuItem logoutItem = menu.findItem(R.id.logOutToolbarItem);
-//        if(user != null){
-//            loginItem.setVisible(false);
-//            logoutItem.setVisible(true);
-//        }else{
-//            loginItem.setVisible(true);
-//            logoutItem.setVisible(false);
-//        }
-//        return true;
-//    }
-
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        switch (item.getItemId()){
-//            case R.id.loginToolbarItem:
-//                Toast.makeText(MainActivity.this, "login", Toast.LENGTH_SHORT).show();
-////                userPreference.setLoginStatus(true);
-//                break;
-//            case R.id.logOutToolbarItem:
-//                Toast.makeText(MainActivity.this, "logout", Toast.LENGTH_SHORT).show();
-////                userPreference.setLoginStatus(false);
-//                break;
-//        }
-//        return super.onOptionsItemSelected(item);
-//    }
 
 
     private File createImageFile() throws IOException {
@@ -441,6 +403,7 @@ public class MainActivity extends AppCompatActivity implements FragmentInter, Na
             toolbar_menu.findItem(R.id.loginToolbarItem).setVisible(false);
             toolbar_menu.findItem(R.id.logOutToolbarItem).setVisible(true);
             toolbar_menu.findItem(R.id.uploadPhotos).setVisible(true);
+            toolbar_menu.findItem(R.id.syncPhotos).setVisible(true);
 
         }
     }
