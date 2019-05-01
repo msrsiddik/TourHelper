@@ -39,60 +39,6 @@ public class BudgetAndCostPref {
         return sharedPreferences.getInt("totalNewBudget",0);
     }
 
-    public void setRoad(float cost){
-        editor.putFloat("totalRoad", cost);
-        editor.commit();
-    }
-
-    public float getRoad(){
-        return sharedPreferences.getFloat("totalRoad",0);
-    }
-
-    public void setMeal(float cost){
-        editor.putFloat("totalMeal", cost);
-        editor.commit();
-    }
-
-    public float getMeal(){
-        return sharedPreferences.getFloat("totalMeal",0);
-    }
-
-    public void setMedical(float cost){
-        editor.putFloat("totalMedical", cost);
-        editor.commit();
-    }
-
-    public float getMedical(){
-        return sharedPreferences.getFloat("totalMedical",0);
-    }
-
-    public void setShopping(float cost){
-        editor.putFloat("totalShopping", cost);
-        editor.commit();
-    }
-
-    public float getShopping(){
-        return sharedPreferences.getFloat("totalShopping",0);
-    }
-
-    public void setTickets(float cost){
-        editor.putFloat("totalTickets", cost);
-        editor.commit();
-    }
-
-    public float getTickets(){
-        return sharedPreferences.getFloat("totalTickets",0);
-    }
-
-    public void setHotel(float cost){
-            editor.putFloat("totalHotel", cost);
-            editor.commit();
-        }
-
-    public float getHotel(){
-        return sharedPreferences.getFloat("totalHotel",0);
-    }
-
     public void clear(){
         editor.clear();
         editor.commit();

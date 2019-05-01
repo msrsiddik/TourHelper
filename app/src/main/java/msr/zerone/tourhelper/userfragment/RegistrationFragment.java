@@ -1,10 +1,7 @@
 package msr.zerone.tourhelper.userfragment;
 
-
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -23,7 +20,10 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.auth.FirebaseAuthEmailException;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 
 import msr.zerone.tourhelper.FragmentInter;
 import msr.zerone.tourhelper.R;
@@ -113,10 +113,25 @@ public class RegistrationFragment extends Fragment {
                 fAuth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isComplete()) {
-                            Log.e(TAG, "onComplete: ");
-                            fUser = FirebaseAuth.getInstance().getCurrentUser();
-                            if (!fUser.getUid().isEmpty()) {
+                        if(!task.isSuccessful()) {
+                            try {
+                                throw task.getException();
+                            } catch(FirebaseAuthWeakPasswordException e) {
+                                regiPassInputId.setError("greater than 6 character");
+                                regiPassInputId.requestFocus();
+                            } catch(FirebaseAuthInvalidCredentialsException e) {
+                                regiEmailInputId.setError("Enter valid email");
+                                regiEmailInputId.requestFocus();
+                            } catch(FirebaseAuthUserCollisionException e) {
+                                regiEmailInputId.setError("Already Register User");
+                                regiEmailInputId.requestFocus();
+                            } catch(Exception e) {
+                                Log.e(TAG, e.getMessage());
+                            }
+                        }
+                        else if (task.isComplete()){
+                            if (!fAuth.getUid().isEmpty()) {
+                                fUser = FirebaseAuth.getInstance().getCurrentUser();
                                 String id = fUser.getUid();
                                 userReference.child(id).setValue(model);
                                 FragmentInter inter = (FragmentInter) getActivity();
@@ -124,16 +139,10 @@ public class RegistrationFragment extends Fragment {
                                 inter.login(true);
                             }
                         }
-                        else {
-                            Log.e(TAG, "Not Complete: ");
-                        }
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(context, ""+e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
+            }else {
+                Toast.makeText(context, "All filed fill up", Toast.LENGTH_SHORT).show();
             }
         }
     };

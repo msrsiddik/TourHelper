@@ -23,6 +23,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -43,6 +44,7 @@ import msr.zerone.tourhelper.eventfragment.EventHomeFragment;
 import msr.zerone.tourhelper.map.MapFragment;
 import msr.zerone.tourhelper.networkinfo.MyReceiver;
 import msr.zerone.tourhelper.networkinfo.NetworkUtil;
+import msr.zerone.tourhelper.userfragment.BudgetAndCostPref;
 import msr.zerone.tourhelper.userfragment.DashboardFragment;
 import msr.zerone.tourhelper.userfragment.LoginFragment;
 import msr.zerone.tourhelper.userfragment.RegistrationFragment;
@@ -63,6 +65,8 @@ public class MainActivity extends AppCompatActivity implements FragmentInter, Na
     private BroadcastReceiver myReceiver = null;
 
     private FirebaseUser user = null;
+    private BudgetAndCostPref pref = null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +75,7 @@ public class MainActivity extends AppCompatActivity implements FragmentInter, Na
 
         user = fAuth.getCurrentUser();
         myReceiver = new MyReceiver();
+        pref = new BudgetAndCostPref(MainActivity.this);
 
         manager = getSupportFragmentManager();
         if (user != null && !WeatherHomeFragment.reStartWeather){
@@ -123,6 +128,12 @@ public class MainActivity extends AppCompatActivity implements FragmentInter, Na
                         manager.beginTransaction().replace(R.id.fragmentContainer, new LoginFragment()).commit();
                         break;
                     case R.id.syncPhotos:
+                        NetworkUtil.isOffline(MainActivity.this, new ViewGroup(MainActivity.this) {
+                            @Override
+                            protected void onLayout(boolean changed, int l, int t, int r, int b) {
+
+                            }
+                        });
                         ImageCollection collect = new ImageCollection();
                         collect.syncPhoto(MainActivity.this);
                         break;
@@ -144,6 +155,7 @@ public class MainActivity extends AppCompatActivity implements FragmentInter, Na
                 return false;
             }
         });
+
     }
 
 
@@ -277,7 +289,6 @@ public class MainActivity extends AppCompatActivity implements FragmentInter, Na
             builder.show();
 
         }
-
     }
 
 
@@ -331,6 +342,9 @@ public class MainActivity extends AppCompatActivity implements FragmentInter, Na
 
     private void logout() {
         fAuth.signOut();
+        pref.setEventName("No tour event set");
+        pref.setBudget(0);
+        pref.setNewBudget(0);
         FragmentInter inter = MainActivity.this;
         inter.login(false);
         File[] allPhotos = new ImageCollection().matches();

@@ -43,6 +43,7 @@ import msr.zerone.tourhelper.calculation.SumCalculator;
 import msr.zerone.tourhelper.eventfragment.model.Budget;
 import msr.zerone.tourhelper.eventfragment.model.Cost;
 import msr.zerone.tourhelper.eventfragment.model.EventModel;
+import msr.zerone.tourhelper.networkinfo.NetworkUtil;
 
 import static msr.zerone.tourhelper.THfirebase.budgetReference;
 import static msr.zerone.tourhelper.THfirebase.costReference;
@@ -76,6 +77,7 @@ public class DashboardFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        NetworkUtil.isOffline(getContext(), container);
         return inflater.inflate(R.layout.fragment_dashboard, container, false);
     }
 
@@ -216,7 +218,7 @@ public class DashboardFragment extends Fragment {
         final List<Cost> shoppinglist = new ArrayList<>();
         final List<Cost> ticketslist = new ArrayList<>();
         final List<Cost> hotellist = new ArrayList<>();
-        costReference.child(preference.getHomeuId()).child(preference.getHomeEventId()).addChildEventListener(new ChildEventListener() {
+        costReference.child(fAuth.getUid()).child(preference.getHomeEventId()).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 Cost cost = dataSnapshot.getValue(Cost.class);
@@ -282,7 +284,7 @@ public class DashboardFragment extends Fragment {
         final SumCalculator calculator = new SumCalculator();
 
         final List<Budget> budgets = new ArrayList<>();
-        budgetReference.child(preference.getHomeuId()).child(preference.getHomeEventId()).addChildEventListener(new ChildEventListener() {
+        budgetReference.child(fAuth.getUid()).child(preference.getHomeEventId()).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 Budget budget = dataSnapshot.getValue(Budget.class);

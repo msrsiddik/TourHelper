@@ -8,6 +8,12 @@ import android.net.Uri;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -17,6 +23,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
@@ -25,6 +32,8 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.List;
+
+import msr.zerone.tourhelper.R;
 
 import static msr.zerone.tourhelper.THfirebase.allPhotosReference;
 import static msr.zerone.tourhelper.THfirebase.fAuth;
@@ -80,7 +89,6 @@ public class ImageCollection {
                 public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
                     savePhotoRef(fAuth.getUid(), uri.getLastPathSegment().replace(".jpg",""));
                     Toast.makeText(context, "Upload Complete", Toast.LENGTH_SHORT).show();
-//                    uri.getLastPathSegment().replace(".jpg","");
                 }
             });
         }
@@ -130,6 +138,7 @@ public class ImageCollection {
                                 "/Pictures", uri.toString());
                     }
                 });
+
             }
 
             @Override
@@ -163,7 +172,6 @@ public class ImageCollection {
         request.setDestinationInExternalFilesDir(context, photoSaveDirectory, photoName+photoExtension);
 
         downloadManager.enqueue(request);
-
     }
 
 }

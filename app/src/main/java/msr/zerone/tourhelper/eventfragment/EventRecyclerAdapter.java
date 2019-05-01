@@ -452,7 +452,7 @@ public class EventRecyclerAdapter extends RecyclerView.Adapter<EventRecyclerAdap
                         }
                         else if (menuItem.getItemId() == R.id.set_home){
                             preference.setHomeEventId(model.getEventId());
-                            preference.setHomeuId(model.getUid());
+//                            preference.setHomeuId(model.getUid());
                         }
                         return false;
                     }

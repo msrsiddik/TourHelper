@@ -1,6 +1,9 @@
 package msr.zerone.tourhelper.cameraandgallery;
 
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -20,6 +23,8 @@ import java.io.File;
 
 import msr.zerone.tourhelper.FragmentInter;
 import msr.zerone.tourhelper.R;
+
+import static msr.zerone.tourhelper.THfirebase.eventReference;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -55,14 +60,12 @@ public class GalleryFragment extends Fragment{
         emptyImage = view.findViewById(R.id.emptyImage);
         refreshGallery = view.findViewById(R.id.refreshGallery);
 
-//        collection = new ImageCollection();
-//        photos = collection.matches();
-
         gridSetItem();
 
         refreshGallery.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                dublicatePhotoRemove();
                 gridSetItem();
                 refreshGallery.setRefreshing(false);
             }
@@ -109,12 +112,43 @@ public class GalleryFragment extends Fragment{
     public boolean onContextItemSelected(MenuItem item) {
         CharSequence i = item.getTitle();
         if (i.equals("Delete (Only local storage)")) {
-            deleteItem.delete();
-            gridSetItem();
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setTitle("Confirmation");
+            builder.setMessage("Are you sure, you want to Delete");
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    deleteItem.delete();
+                    gridSetItem();
+                }
+            }).setNegativeButton("Cancel ", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Toast.makeText(getContext(), "Cancel", Toast.LENGTH_SHORT).show();
+                }
+            });
+            builder.create().show();
+
         }else if (i.equals("Delete (local and cloud storage)")){
-            collection.deletePhoto(deleteItem, getContext());
-            deleteItem.delete();
-            gridSetItem();
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setTitle("Confirmation");
+            builder.setMessage("Are you sure, you want to Delete");
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    collection.deletePhoto(deleteItem, getContext());
+                    deleteItem.delete();
+                    gridSetItem();
+                }
+            }).setNegativeButton("Cancel ", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Toast.makeText(getContext(), "Cancel", Toast.LENGTH_SHORT).show();
+                }
+            });
+            builder.create().show();
         }
         return true;
     }
@@ -128,6 +162,15 @@ public class GalleryFragment extends Fragment{
             emptyImage.setVisibility(View.GONE);
             PhotoGridViewAdapter adapter = new PhotoGridViewAdapter(getContext(), photos);
             photo_gridview.setAdapter(adapter);
+        }
+    }
+
+    private void dublicatePhotoRemove(){
+        for (File photo : photos){
+            Uri uri = Uri.fromFile(photo);
+            if (uri.getLastPathSegment().matches("(.*)-(.*)")){
+                photo.delete();
+            }
         }
     }
 
