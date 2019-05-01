@@ -229,6 +229,7 @@ public class MainActivity extends AppCompatActivity implements FragmentInter, Na
             toolbar_menu.findItem(R.id.loginToolbarItem).setVisible(false);
             toolbar_menu.findItem(R.id.logOutToolbarItem).setVisible(true);
             toolbar_menu.findItem(R.id.uploadPhotos).setVisible(true);
+            toolbar_menu.findItem(R.id.syncPhotos).setVisible(true);
         }else {
             nav_menu.findItem(R.id.login).setVisible(true);
             nav_menu.findItem(R.id.logout).setVisible(false);
