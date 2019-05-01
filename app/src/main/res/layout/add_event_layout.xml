@@ -4,17 +4,18 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:background="#DF9F9F">
+    android:background="@drawable/bacground_color">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#9C27B0"
+        android:background="@color/colorPrimary"
         android:layout_margin="10dp">
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Add a Tour"
+            android:textColor="#fff"
             android:gravity="center"
             android:textSize="30sp"/>
         <android.support.design.widget.FloatingActionButton
@@ -130,7 +131,7 @@
                     android:text="Create Tour"
                     android:textColor="#fff"
                     android:textSize="20sp"
-                    android:background="@color/colorPrimary"/>
+                    android:background="@color/buttonBgC"/>
 
             </LinearLayout>
 

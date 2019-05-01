@@ -9,13 +9,14 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#9C27B0"
+        android:background="@color/colorPrimary"
         android:layout_margin="10dp">
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Tour Details"
             android:gravity="center"
+            android:textColor="#fff"
             android:textSize="30sp"/>
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/closeEventAddWindow"
@@ -152,11 +153,14 @@
             android:translationZ="5dp"
             app:cardCornerRadius="3dp"
             android:clickable="true"
+            app:cardBackgroundColor="@color/buttonBgC"
             android:background="?android:attr/selectableItemBackground">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Budget +"
+                android:textColor="#fff"
+                android:textStyle="bold"
                 android:textSize="20dp"
                 android:padding="5dp"/>
         </android.support.v7.widget.CardView>
@@ -190,13 +194,16 @@
             android:translationZ="5dp"
             android:elevation="4dp"
             app:cardCornerRadius="3dp"
+            app:cardBackgroundColor="@color/buttonBgC"
             android:clickable="true"
             android:background="?android:attr/selectableItemBackground">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Cost +"
+                android:textColor="#fff"
                 android:textSize="20dp"
+                android:textStyle="bold"
                 android:padding="5dp"/>
         </android.support.v7.widget.CardView>
     </RelativeLayout>

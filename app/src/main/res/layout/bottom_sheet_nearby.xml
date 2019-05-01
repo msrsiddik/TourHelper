@@ -11,7 +11,8 @@
 
     <android.support.v7.widget.Toolbar
         app:title="NearbyPlace"
-        android:background="@color/grey"
+        app:titleTextColor="#fff"
+        android:background="@color/colorPrimary"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
@@ -19,7 +20,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:weightSum="5">
+        android:weightSum="5"
+        android:background="@color/cardViewBgC">
 
         <Spinner
             android:id="@+id/spinnerView"
@@ -34,6 +36,11 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:background="@color/buttonBgC"
+            android:textColor="#fff"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:layout_margin="4dp"
             android:text="Find"/>
 
     </LinearLayout>
@@ -41,6 +48,7 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/placeRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:background="@drawable/bacground_color"/>
 
 </LinearLayout>

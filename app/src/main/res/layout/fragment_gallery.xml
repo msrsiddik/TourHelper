@@ -16,7 +16,8 @@
             android:id="@+id/emptyImage"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:src="@drawable/ic_cancel"
+            android:layout_marginLeft="5dp"
+            android:src="@drawable/image"
             android:visibility="gone"/>
 
         <GridView
