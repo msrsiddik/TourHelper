@@ -48,7 +48,9 @@ import msr.zerone.tourhelper.userfragment.BudgetAndCostPref;
 import msr.zerone.tourhelper.userfragment.DashboardFragment;
 import msr.zerone.tourhelper.userfragment.LoginFragment;
 import msr.zerone.tourhelper.userfragment.RegistrationFragment;
+import msr.zerone.tourhelper.userfragment.UserPreference;
 import msr.zerone.tourhelper.weather.WeatherHomeFragment;
+import msr.zerone.tourhelper.weather.todaypojo.Main;
 
 import static msr.zerone.tourhelper.THfirebase.fAuth;
 import static msr.zerone.tourhelper.THfirebase.userReference;
@@ -66,6 +68,7 @@ public class MainActivity extends AppCompatActivity implements FragmentInter, Na
 
     private FirebaseUser user = null;
     private BudgetAndCostPref pref = null;
+    private UserPreference preference = null;
 
 
     @Override
@@ -76,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements FragmentInter, Na
         user = fAuth.getCurrentUser();
         myReceiver = new MyReceiver();
         pref = new BudgetAndCostPref(MainActivity.this);
+        preference = new UserPreference(MainActivity.this);
 
         manager = getSupportFragmentManager();
         if (user != null && !WeatherHomeFragment.reStartWeather){
@@ -341,10 +345,9 @@ public class MainActivity extends AppCompatActivity implements FragmentInter, Na
     }
 
     private void logout() {
+        pref.clear();
+        preference.clear();
         fAuth.signOut();
-        pref.setEventName("No tour event set");
-        pref.setBudget(0);
-        pref.setNewBudget(0);
         FragmentInter inter = MainActivity.this;
         inter.login(false);
         File[] allPhotos = new ImageCollection().matches();
